@@ -1,0 +1,306 @@
+uv venv .venv --python 3.13
+
+source .venv/bin/activate
+
+sudo apt install libcap-dev
+
+uv pip install picamera2
+
+python xxx.py
+
+
+
+sudo apt install libcamera-dev libcamera-tools
+
+sudo apt install python3-libcamera
+
+apt search python3-libcamera
+
+-05-29-picamera2$ apt search python3-libcamera
+Sorting... Done
+Full Text Search... Done
+python3-libcamera/noble,now 0.2.0-3fakesync1build6 arm64 [installed]
+  complex camera support library (Python bindings)
+
+
+-----------------------------------------------------
+
+deactivate
+rm -rf .venv
+
+uv venv .venv --python 3.13 --system-site-packages
+source .venv/bin/activate
+
+uv pip install picamera2
+
+python xxx.py
+
+-----------------------------------------------------
+
+rm -rf .venv
+
+uv venv .venv --python 3.12 --system-site-packages
+source .venv/bin/activate
+
+
+-05-29-picamera2$ python xxx.py
+Traceback (most recent call last):
+  File "/home/sona/2026-05-29-picamera2/xxx.py", line 14, in <module>
+    from picamera2 import Picamera2
+  File "/home/sona/2026-05-29-picamera2/.venv/lib/python3.12/site-packages/picamera2/__init__.py", line 4, in <module>
+    import libcamera
+ModuleNotFoundError: No module named 'libcamera'
+
+(.venv) sona@rpi-orso-sdb:~/2026-05-29-picamera2$ python -c "import sys; print('\n'.join(sys.path))"
+
+/usr/lib/python312.zip
+/usr/lib/python3.12
+/usr/lib/python3.12/lib-dynload
+/home/sona/2026-05-29-picamera2/.venv/lib/python3.12/site-packages
+/usr/local/lib/python3.12/dist-packages
+/usr/lib/python3/dist-packages
+
+
+-05-29-picamera2$ python -c "import libcamera; print(libcamera.__file__)"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'libcamera'
+
+ls /usr/lib/python3/dist-packages/libcamera/*.so
+ls /usr/lib/python3/dist-packages/
+
+-----------------------------------------------------------
+
+
+sudo apt install \
+  libcamera0.2 \
+  libcamera-v4l2 \
+  libcamera-ipa \
+  libcamera-tools
+
+
+
+export PYTHONPATH=/usr/lib/aarch64-linux-gnu/python3.12/site-packages:$PYTHONPATH
+
+-05-29-picamera2$ export PYTHONPATH=/usr/lib/aarch64-linux-gnu/python3.12/site-packages:$PYTHONPATH
+(.venv) sona@rpi-orso-sdb:~/2026-05-29-picamera2$ python3 -c "import libcamera; print('OK')"
+OK
+
+
+PYTHONPATH=/usr/lib/aarch64-linux-gnu/python3.12/site-packages python xxx.py
+
+example needs a gui
+
+---------------------------------
+
+uv pip install flask
+
+uv pip install py-kms
+
+python yyy.py
+
+
+----------------------------------
+
+cat /boot/firmware/config.txt
+
+-------------------------
+
+sudo apt update
+sudo apt install -y linux-modules-extra-$(uname -r)
+
+
+----------------------------------------------
+
+ubuntu source bricked?
+
+cat /etc/apt/sources.list
+
+(.venv) sona@rpi-orso-sdb:~/2026-05-29-picamera2$ cat /etc/apt/sources.list
+deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse
+deb http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted universe multiverse
+deb http://ports.ubuntu.com/ubuntu-ports noble-security main restricted universe multiverse
+deb http://ports.ubuntu.com/ubuntu-ports noble-backports main restricted universe multiverse
+
+
+cat /etc/apt/sources.list.d/ubuntu.sources
+
+-05-29-picamera2$ cat /etc/apt/sources.list.d/ubuntu.sources
+## Ubuntu distribution repository
+##
+## The following settings can be adjusted to configure which packages to use from Ubuntu.
+## Mirror your choices (except for URIs and Suites) in the security section below to
+## ensure timely security updates.
+##
+## Types: Append deb-src to enable the fetching of source package.
+## URIs: A URL to the repository (you may add multiple URLs)
+## Suites: The following additional suites can be configured
+##   <name>-updates   - Major bug fix updates produced after the final release of the
+##                      distribution.
+##   <name>-backports - software from this repository may not have been tested as
+##                      extensively as that contained in the main release, although it includes
+##                      newer versions of some applications which may provide useful features.
+##                      Also, please note that software in backports WILL NOT receive any review
+##                      or updates from the Ubuntu security team.
+## Components: Aside from main, the following components can be added to the list
+##   restricted  - Software that may not be under a free license, or protected by patents.
+##   universe    - Community maintained packages. Software in this repository receives maintenance
+##                 from volunteers in the Ubuntu community, or a 10 year security maintenance
+##                 commitment from Canonical when an Ubuntu Pro subscription is attached.
+##   multiverse  - Community maintained of restricted. Software from this repository is
+##                 ENTIRELY UNSUPPORTED by the Ubuntu team, and may not be under a free
+##                 licence. Please satisfy yourself as to your rights to use the software.
+##                 Also, please note that software in multiverse WILL NOT receive any
+##                 review or updates from the Ubuntu security team.
+##
+## See the sources.list(5) manual page for further settings.
+Types: deb
+URIs: http://ports.ubuntu.com/ubuntu-ports/
+Suites: noble noble-updates noble-backports
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+## Ubuntu security updates. Aside from URIs and Suites,
+## this should mirror your choices in the previous section.
+Types: deb
+URIs: http://ports.ubuntu.com/ubuntu-ports/
+Suites: noble-security
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+briick a source
+
+(.venv) sona@rpi-orso-sdb:~/2026-05-29-picamera2$ cat /etc/apt/sources.list
+#deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse
+#deb http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted universe multiverse
+#deb http://ports.ubuntu.com/ubuntu-ports noble-security main restricted universe multiverse
+#deb http://ports.ubuntu.com/ubuntu-ports noble-backports main restricted universe multiverse
+
+----------------------------------------------------------------------------
+
+
+sudo apt install linux-modules-extra-$(uname -r)
+
+-05-29-picamera2$ sudo apt install linux-modules-extra-$(uname -r)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Note, selecting 'linux-modules-6.8.0-1057-raspi' instead of 'linux-modules-extra-6.8.0-1057-raspi'
+linux-modules-6.8.0-1057-raspi is already the newest version (6.8.0-1057.61).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+
+Ubuntu’s Raspberry Pi kernel is stripped down and does not ship the camera stack that Raspberry Pi OS includes.
+
+This is not your fault — it’s a known Ubuntu issue.
+
+Let me break it down cleanly.
+ù
+
+---------------------------------------
+
+
+sudo apt install python3-picamera2
+
+
+-----------------------------------------------------
+
+https://dev.to/minindu_pasan_8f0e03c1063/how-to-setup-raspberry-pi-camera-module-3-on-ubuntu-2404-4pme
+
+sudo apt remove --purge rpicam-apps
+
+sudo apt remove --purge libcamera-dev libcamera0
+
+
+# Essential build tools
+sudo apt install -y git python3-pip python3-jinja2 meson cmake ninja-build
+
+# libcamera dependencies
+sudo apt install -y libboost-dev libgnutls28-dev openssl libtiff5-dev pybind11-dev
+sudo apt install -y python3-yaml python3-ply libglib2.0-dev libgstreamer-plugins-base1.0-dev
+
+# rpicam-apps dependencies
+sudo apt install -y cmake libboost-program-options-dev libdrm-dev libexif-dev
+sudo apt install -y libepoxy-dev libjpeg-dev libtiff5-dev libpng-dev
+
+# For desktop Ubuntu (with GUI preview)
+sudo apt install -y qtbase5-dev libqt5core5a libqt5gui5 libqt5widgets5
+
+# Hardware encoder support
+sudo apt install -y v4l-utils
+
+
+# Clone rpicam-apps
+git clone https://github.com/raspberrypi/rpicam-apps.git
+cd rpicam-apps
+
+# Configure for desktop Ubuntu
+meson setup build \
+  -Denable_libav=disabled \
+  -Denable_drm=enabled \
+  -Denable_egl=enabled \
+  -Denable_qt=enabled \
+  -Denable_opencv=disabled \
+  -Denable_tflite=disabled \
+  -Denable_hailo=disabled
+
+# For Ubuntu Server (headless), use this instead:
+# meson setup build \
+#   -Denable_libav=disabled \
+#   -Denable_drm=enabled \
+#   -Denable_egl=disabled \
+#   -Denable_qt=disabled \
+#   -Denable_opencv=disabled \
+#   -Denable_tflite=disabled \
+#   -Denable_hailo=disabled
+
+# Build
+meson compile -C build
+
+>>>>
+
+# Install
+sudo meson install -C build
+
+# Update library cache
+sudo ldconfig
+
+cd ~
+
+
+sudo nano /boot/firmware/config.txt
+
+# For Camera Module 3
+dtoverlay=imx708
+
+# For other cameras, use:
+# dtoverlay=imx477  # HQ Camera
+# dtoverlay=imx296  # GS Camera
+# dtoverlay=imx519  # 16MP Camera
+
+sudo reboot
+
+# Check version
+rpicam-hello --version
+
+# List detected cameras
+rpicam-hello --list-cameras
+
+# Preview for 5 seconds
+rpicam-hello -t 5000
+
+# Take a photo
+rpicam-still -o test.jpg
+
+# Record 10 seconds of video (IMPORTANT: use --codec yuv420)
+rpicam-vid -t 10000 -o test.h264 --codec yuv420
+
+
+
+
+
+-------------------------
+
+
+https://askubuntu.com/questions/1529421/camera-setting-up-on-ubuntu-24-for-raspberry-pi-5?noredirect=1&lq=1
+
+

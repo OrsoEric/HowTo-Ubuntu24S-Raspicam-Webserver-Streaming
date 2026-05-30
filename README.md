@@ -1591,6 +1591,89 @@ No VM guests are running outdated hypervisor (qemu) binaries on this
 
 </details>
 
+# Install G++
+
+```bash
+sudo apt update
+sudo apt install g++
+```
+
+
+<details>
+<summary>Log</summary>
+
+```bash
+sona@rpi4-orso-sdbh:~/libcamera$ sudo apt update
+Hit:1 http://ports.ubuntu.com/ubuntu-ports noble InRelease
+Hit:2 http://ports.ubuntu.com/ubuntu-ports noble-updates InRelease
+Hit:3 http://ports.ubuntu.com/ubuntu-ports noble-backports InRelease
+Hit:4 http://ports.ubuntu.com/ubuntu-ports noble-security InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+sona@rpi4-orso-sdbh:~/libcamera$ sudo apt install g++
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+  linux-image-6.8.0-1047-raspi linux-modules-6.8.0-1047-raspi
+Use 'sudo apt autoremove' to remove them.
+The following additional packages will be installed:
+  g++-13 g++-13-aarch64-linux-gnu g++-aarch64-linux-gnu
+Suggested packages:
+  gcc-13-doc
+The following NEW packages will be installed:
+  g++ g++-13 g++-13-aarch64-linux-gnu g++-aarch64-linux-gnu
+0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+Need to get 10.9 MB of archives.
+After this operation, 30.6 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 g++-13-aarch64-linux-gnu arm64 13.3.0-6ubuntu2~24.04.1 [10.9 MB]
+Get:2 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 g++-13 arm64 13.3.0-6ubuntu2~24.04.1 [16.0 kB]
+Get:3 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 g++-aarch64-linux-gnu arm64 4:13.2.0-7ubuntu1 [962 B]
+Get:4 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 g++ arm64 4:13.2.0-7ubuntu1 [1082 B]
+Fetched 10.9 MB in 1s (8123 kB/s)
+Selecting previously unselected package g++-13-aarch64-linux-gnu.
+(Reading database ... 97898 files and directories currently installed.)
+Preparing to unpack .../g++-13-aarch64-linux-gnu_13.3.0-6ubuntu2~24.04.1_arm64.deb ...
+Unpacking g++-13-aarch64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package g++-13.
+Preparing to unpack .../g++-13_13.3.0-6ubuntu2~24.04.1_arm64.deb ...
+Unpacking g++-13 (13.3.0-6ubuntu2~24.04.1) ...
+Selecting previously unselected package g++-aarch64-linux-gnu.
+Preparing to unpack .../g++-aarch64-linux-gnu_4%3a13.2.0-7ubuntu1_arm64.deb ...
+Unpacking g++-aarch64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Selecting previously unselected package g++.
+Preparing to unpack .../g++_4%3a13.2.0-7ubuntu1_arm64.deb ...
+Unpacking g++ (4:13.2.0-7ubuntu1) ...
+Setting up g++-13-aarch64-linux-gnu (13.3.0-6ubuntu2~24.04.1) ...
+Setting up g++-13 (13.3.0-6ubuntu2~24.04.1) ...
+Setting up g++-aarch64-linux-gnu (4:13.2.0-7ubuntu1) ...
+Setting up g++ (4:13.2.0-7ubuntu1) ...
+update-alternatives: using /usr/bin/g++ to provide /usr/bin/c++ (c++) in auto mode
+Processing triggers for man-db (2.12.0-4build2) ...
+Scanning processes...                                                 
+Scanning processor microcode...                                       
+Scanning linux images...                                              
+
+Running kernel seems to be up-to-date.
+
+The processor microcode seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this
+ host.
+```
+
+</details>
+
+
 
 # REBOOT
 
@@ -1598,9 +1681,479 @@ No VM guests are running outdated hypervisor (qemu) binaries on this
 sudo reboot
 ```
 
+# Clone Libcamera
+
+```bash
+cd
+git clone https://github.com/raspberrypi/libcamera.git
+cd libcamera
+```
+
+```bash
+meson setup build --buildtype=release \
+  -Dpipelines=rpi/vc4,rpi/pisp \
+  -Dipas=rpi/vc4,rpi/pisp \
+  -Dv4l2=true \
+  -Dgstreamer=enabled \
+  -Dtest=false \
+  -Dlc-compliance=disabled \
+  -Dcam=disabled \
+  -Dqcam=disabled \
+  -Ddocumentation=disabled \
+  -Dpycamera=enabled
+```
+
+<details>
+<summary>Log</summary>
+
+```bash
+sona@rpi4-orso-sdbh:~/libcamera$ meson setup build --buildtype=release \
+  -Dpipelines=rpi/vc4,rpi/pisp \
+  -Dipas=rpi/vc4,rpi/pisp \
+  -Dv4l2=true \
+  -Dgstreamer=enabled \
+  -Dtest=false \
+  -Dlc-compliance=disabled \
+  -Dcam=disabled \
+  -Dqcam=disabled \
+  -Ddocumentation=disabled \
+  -Dpycamera=enabled
+The Meson build system
+Version: 1.3.2
+Source dir: /home/sona/libcamera
+Build dir: /home/sona/libcamera/build
+Build type: native build
+meson_options.txt:76: WARNING: Keyword argument "value" defined multiple times.
+WARNING: This will be an error in future Meson releases.
+DEPRECATION: Option 'v4l2' value 'true' is replaced by 'enabled'
+Project name: libcamera
+Project version: 0.7.1
+C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+C linker for the host machine: cc ld.bfd 2.42
+C++ compiler for the host machine: c++ (gcc 13.3.0 "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+C++ linker for the host machine: c++ ld.bfd 2.42
+Host machine cpu family: aarch64
+Host machine cpu: aarch64
+Header "unistd.h" has symbol "close_range" : YES 
+Header "fcntl.h" has symbol "F_ADD_SEALS" : YES 
+Header "unistd.h" has symbol "issetugid" : NO 
+Header "locale.h" has symbol "locale_t" : YES 
+Header "sys/mman.h" has symbol "memfd_create" : YES 
+Header "stdlib.h" has symbol "secure_getenv" : YES 
+Header "version" has symbol "_LIBCPP_VERSION" : NO 
+Header "version" has symbol "__GLIBCXX__" : YES 
+Message: Detected C++ standard library: libstdc++
+Compiler for C supports arguments -Wno-c99-designator: NO 
+Found pkg-config: YES (/usr/bin/pkg-config) 1.8.1
+Found CMake: /usr/bin/cmake (3.28.3)
+Run-time dependency lttng-ust found: NO (tried pkgconfig and cmake)
+Program ./parser.py found: YES (/home/sona/libcamera/utils/codegen/ipc/./parser.py)
+Program ./generate.py found: YES (/home/sona/libcamera/utils/codegen/ipc/./generate.py)
+Program ./extract-docs.py found: YES (/home/sona/libcamera/utils/codegen/ipc/./extract-docs.py)
+Configuring version.h using configuration
+Program openssl found: YES (/usr/bin/openssl)
+Run-time dependency libyuv found: NO (tried pkgconfig and cmake)
+Has header "libyuv.h" : NO 
+Library atomic found: YES
+Run-time dependency threads found: YES
+Run-time dependency libdw found: YES 0.190
+Run-time dependency libunwind found: YES 1.6.2
+Header "execinfo.h" has symbol "backtrace" : YES 
+Library rt found: YES
+Run-time dependency libpisp found: NO (tried pkgconfig and cmake)
+Looking for a fallback subproject for the dependency libpisp
+Cloning into 'libpisp'...
+remote: Enumerating objects: 101, done.
+remote: Counting objects: 100% (101/101), done.
+remote: Compressing objects: 100% (92/92), done.
+remote: Total 101 (delta 6), reused 47 (delta 6), pack-reused 0 (from 0)
+Receiving objects: 100% (101/101), 114.55 KiB | 2.01 MiB/s, done.
+Resolving deltas: 100% (6/6), done.
+
+Executing subproject libpisp 
+
+libpisp| DEPRECATION: Option 'v4l2' value 'true' is replaced by 'enabled'
+libpisp| Project name: libpisp
+libpisp| Project version: 1.3.0
+libpisp| C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+libpisp| C linker for the host machine: cc ld.bfd 2.42
+libpisp| C++ compiler for the host machine: c++ (gcc 13.3.0 "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+libpisp| C++ linker for the host machine: c++ ld.bfd 2.42
+libpisp| Configuring pisp_build_config.h using configuration
+libpisp| Run-time dependency nlohmann_json found: NO (tried pkgconfig and cmake)
+libpisp| Looking for a fallback subproject for the dependency nlohmann_json
+libpisp| Using subprojects/libpisp/subprojects/nlohmann_json.wrap
+libpisp| Downloading nlohmann_json source from https://github.com/nlohmann/json/releases/download/v3.11.2/include.zip
+Download size: 293810
+Downloading: ..........
+
+Executing subproject libpisp:nlohmann_json
+
+nlohmann_json| DEPRECATION: Option 'v4l2' value 'true' is replaced by 'enabled'
+nlohmann_json| Project name: nlohmann_json
+nlohmann_json| Project version: 3.11.2
+nlohmann_json| C++ compiler for the host machine: c++ (gcc 13.3.0 "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+nlohmann_json| C++ linker for the host machine: c++ ld.bfd 2.42
+nlohmann_json| Build targets in project: 25
+nlohmann_json| Subproject nlohmann_json finished.
+
+libpisp| Dependency nlohmann_json from subproject subprojects/nlohmann_json-3.11.2 found: YES 3.11.2
+libpisp| Dependency threads found: YES unknown (cached)
+libpisp| Library dl found: YES
+libpisp| Run-time dependency Boost (missing: log, log_setup, system, thread) found: NO (tried system)
+libpisp| Build targets in project: 27
+libpisp| Subproject libpisp finished.
+
+Dependency libpisp from subproject subprojects/libpisp found: YES 1.3.0
+Run-time dependency dl found: YES
+Run-time dependency libudev found: YES 255
+Run-time dependency yaml-0.1 found: NO (tried pkgconfig and cmake)
+Looking for a fallback subproject for the dependency yaml-0.1
+Downloading libyaml source from https://pyyaml.org/download/libyaml/yaml-0.2.5.tar.gz
+Download size: 609454
+Downloading: ..........
+Downloading libyaml patch from https://wrapdb.mesonbuild.com/v2/libyaml_0.2.5-1/get_patch
+Download size: 2092
+Downloading: ..........
+
+Executing subproject libyaml 
+
+libyaml| DEPRECATION: Option 'v4l2' value 'true' is replaced by 'enabled'
+libyaml| Project name: yaml-0.1
+libyaml| Project version: 0.2.5
+libyaml| C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+libyaml| C linker for the host machine: cc ld.bfd 2.42
+libyaml| Configuring config.h using configuration
+libyaml| Build targets in project: 31
+libyaml| Subproject libyaml finished.
+
+Dependency yaml-0.1 from subproject subprojects/yaml-0.2.5 found: YES 0.2.5
+Run-time dependency gnutls found: YES 3.8.3
+Dependency libexif skipped: feature android disabled
+Dependency libjpeg skipped: feature android disabled
+Run-time dependency tensorflow-lite found: NO (tried pkgconfig and cmake)
+Dependency libevent_pthreads skipped: feature cam disabled
+Dependency libevent_pthreads skipped: feature lc-compliance disabled
+Run-time dependency libtiff-4 found: YES 4.5.1
+Dependency gtest skipped: feature lc-compliance disabled
+Dependency qt6 (modules: Core, Gui, OpenGL, OpenGLWidgets, Widgets) skipped: feature qcam disabled
+Run-time dependency glib-2.0 found: YES 2.80.0
+Run-time dependency gstreamer-video-1.0 found: YES 1.24.2
+Run-time dependency gstreamer-allocators-1.0 found: YES 1.24.2
+Program python3 found: YES (/usr/bin/python3)
+Run-time dependency pybind11 found: YES 2.11.1
+Run-time dependency python found: YES 3.12
+Configuring libcamerify using configuration
+Program doxygen skipped: feature documentation disabled
+Program dot skipped: feature documentation disabled
+Program sphinx-build-3 sphinx-build skipped: feature documentation disabled
+Configuring config.h using configuration
+Build targets in project: 56
+
+libcamera 0.7.1
+
+  Versions
+    Sources                  : 0.7.1+rpt20260429
+
+  Paths
+    LIBCAMERA_DATA_DIR       : "/usr/local/share/libcamera"
+    LIBCAMERA_SYSCONF_DIR    : "/usr/local/etc/libcamera"
+    IPA_PROXY_DIR            : "/usr/local/libexec/libcamera"
+    IPA_CONFIG_DIR           : "/usr/local/etc/libcamera/ipa:/usr/local/share/libcamera/ipa"
+    IPA_MODULE_DIR           : "/usr/local/lib/libcamera/ipa"
+
+  Configuration
+    SoftISP support          : NO
+    IPA modules signed with  : gnutls
+    Enabled pipelines        : rpi/vc4
+                               rpi/pisp
+    Enabled IPA modules      : rpi/vc4
+                               rpi/pisp
+    Controls files           : control_ids_core.yaml
+                               control_ids_debug.yaml
+                               control_ids_draft.yaml
+                               control_ids_rpi.yaml
+    Properties files         : property_ids_draft.yaml
+                               property_ids_core.yaml
+    Hotplug support          : YES
+    Tracing support          : NO
+    Android support          : NO
+    GStreamer support        : YES
+    Python bindings          : YES
+    V4L2 emulation support   : YES
+    Unit tests               : NO
+
+  Applications
+    cam application          : NO
+    cam options              :
+    DNG output support       : YES
+    qcam application         : NO
+    lc-compliance application: NO
+
+  Subprojects
+    libpisp                  : YES 1 warnings
+    libyaml                  : YES
+    nlohmann_json            : YES (from libpisp)
+
+  User defined options
+    buildtype                : release
+    cam                      : disabled
+    documentation            : disabled
+    gstreamer                : enabled
+    ipas                     : rpi/vc4,rpi/pisp
+    lc-compliance            : disabled
+    pipelines                : rpi/vc4,rpi/pisp
+    pycamera                 : enabled
+    qcam                     : disabled
+    test                     : false
+    v4l2                     : true
+
+Found ninja-1.11.1 at /usr/bin/ninja
+```
+
+</details>
+
+```bash
+ninja -C build
+```
+
+<details>
+<summary>Log</summary>
+
+```bash
+sona@rpi4-orso-sdbh:~/libcamera$ ninja -C build
+ninja: Entering directory `build'
+[19/275] Generating src/ipa-priv-key with a custom command
+..+...+.......+...+..+.........+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*...+..+.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+......+...+.........+.+.........+.....+.......+...........+....+.....+...+.+............+..+...+....+.....+...+...+.............+...........+......+.......+.....+......+.+....................+..................+..........+...+........+......+.+.....+...+.........+.+..+....+.........+......+...............+...+...+...+...........+.+..+...+...+.+...+.................+.........+..........+..+.........+...+...+..........+...+......+...+..+.+...+......+.....+..........+.....+...+..........+........+...+.......+.................+...............+.+.....+.+.....+....+......+..............+......+......+.......+...........+....+..+....+........................+...+..+......+....+..+..........+.....+...+.+..+....+..............+...............+......+.+..+...+....+.....+....+......+........+...+..................+.........+.......+.....+.+..+.......+.........+.....+......+......+.......+...........+.......+.....+...+.+...+............+......+.........+......+..................+..............+...............+...+...+.+......+...+.........+..+...+................+......+.....+.............+..+................+..+.+...........+.........+.+......+.....+....+...+.....+.+............+...+.....+............+..........+...+.........+............+...+......+..+...+....+.....+............+...+......+.+......+..+......+...............+.+...+...+..............+...+..........+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+........+..+....+...+...+...+......+......+..+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.....+...+...+.....+...+......+.+.....+.......+.....+.............+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+.....+...+.........+...+...+.+...+......+..+...+......+...+.+.........+......+.........+.................+.+..+.+.....................+...+..+...+...+...+....+...+.....+..........+..+...............+...+.......+.....+...+.......+...+...+......+...........+...+.......+........+..........+...........+.+....................+............+.+..+...+.+.....+.+.........+.....+.+........+.+..............+.+........................+......+...+.....+.+..+...................+...+.....+.+.....+............+....+.....+......+...+....+...........+....+..+.+..+...+...............+...+.+........+.+.....+.+......+........+.+.....+.........+.+......+..+............+....+...........+....+...........+......+.............+..+........................+......+.........+...+..........+...........+.......+............+...........+....+...+............+...+..+.+.....+.......+..+......+......+..........+.........+..............+...+.......+.....+.+..+...+............+....+...+.....+.+.....+.+.....+.+.....+..........+..................+..+.......+..+....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+[69/275] Compiling C object subpr...sts/test-reader.p/test-reader.c.o
+../subprojects/yaml-0.2.5/tests/test-reader.c: In function ‘check_boms’:
+../subprojects/yaml-0.2.5/tests/test-reader.c:187:31: warning: comparison of integer expressions of different signedness: ‘size_t’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+  187 |             if (parser.unread != check) {
+      |                               ^~
+[72/275] Compiling C object subpr...2.5/libyaml-0.a.p/src_emitter.c.o
+../subprojects/yaml-0.2.5/src/emitter.c: In function ‘yaml_emitter_write_plain_scalar’:
+../subprojects/yaml-0.2.5/src/emitter.c:28:6: warning: value computed is not used [-Wunused-value]
+   28 |      && ((emitter->line_break == YAML_CR_BREAK ?                                \
+      |      ^~
+../subprojects/yaml-0.2.5/src/emitter.c:56:11: note: in expansion of macro ‘PUT_BREAK’
+   56 |          (PUT_BREAK(emitter),                                                   \
+      |           ^~~~~~~~~
+../subprojects/yaml-0.2.5/src/emitter.c:1962:18: note: in expansion of macro ‘WRITE_BREAK’
+ 1962 |             if (!WRITE_BREAK(emitter, string)) return 0;
+      |                  ^~~~~~~~~~~
+../subprojects/yaml-0.2.5/src/emitter.c: In function ‘yaml_emitter_write_single_quoted_scalar’:
+../subprojects/yaml-0.2.5/src/emitter.c:28:6: warning: value computed is not used [-Wunused-value]
+   28 |      && ((emitter->line_break == YAML_CR_BREAK ?                                \
+      |      ^~
+../subprojects/yaml-0.2.5/src/emitter.c:56:11: note: in expansion of macro ‘PUT_BREAK’
+   56 |          (PUT_BREAK(emitter),                                                   \
+      |           ^~~~~~~~~
+../subprojects/yaml-0.2.5/src/emitter.c:2019:18: note: in expansion of macro ‘WRITE_BREAK’
+ 2019 |             if (!WRITE_BREAK(emitter, string)) return 0;
+      |                  ^~~~~~~~~~~
+../subprojects/yaml-0.2.5/src/emitter.c: In function ‘yaml_emitter_write_literal_scalar’:
+../subprojects/yaml-0.2.5/src/emitter.c:28:6: warning: value computed is not used [-Wunused-value]
+   28 |      && ((emitter->line_break == YAML_CR_BREAK ?                                \
+      |      ^~
+../subprojects/yaml-0.2.5/src/emitter.c:56:11: note: in expansion of macro ‘PUT_BREAK’
+   56 |          (PUT_BREAK(emitter),                                                   \
+      |           ^~~~~~~~~
+../subprojects/yaml-0.2.5/src/emitter.c:2285:18: note: in expansion of macro ‘WRITE_BREAK’
+ 2285 |             if (!WRITE_BREAK(emitter, string)) return 0;
+      |                  ^~~~~~~~~~~
+../subprojects/yaml-0.2.5/src/emitter.c: In function ‘yaml_emitter_write_folded_scalar’:
+../subprojects/yaml-0.2.5/src/emitter.c:28:6: warning: value computed is not used [-Wunused-value]
+   28 |      && ((emitter->line_break == YAML_CR_BREAK ?                                \
+      |      ^~
+../subprojects/yaml-0.2.5/src/emitter.c:56:11: note: in expansion of macro ‘PUT_BREAK’
+   56 |          (PUT_BREAK(emitter),                                                   \
+      |           ^~~~~~~~~
+../subprojects/yaml-0.2.5/src/emitter.c:2334:18: note: in expansion of macro ‘WRITE_BREAK’
+ 2334 |             if (!WRITE_BREAK(emitter, string)) return 0;
+      |                  ^~~~~~~~~~~
+[75/275] Generating src/libcamera...pub_key_cpp with a custom command
+writing RSA key
+[76/275] Generating src/libcamera...der-headers with a custom command
+[SHADER-GEN] bayer_1x_packed_frag
+[SHADER-GEN] bayer_unpacked_frag
+[SHADER-GEN] bayer_unpacked_vert
+[SHADER-GEN] identity_vert
+[275/275] Linking target src/py/l....cpython-312-aarch64-linux-gnu.so
+```
+
+</details>
+
+
+```bash
+sudo ninja -C build install
+```
+
+
+<details>
+<summary>Log</summary>
+
+```bash
+sona@rpi4-orso-sdbh:~/libcamera$ sudo ninja -C build install
+[sudo] password for sona: 
+ninja: Entering directory `build'
+[5/6] Installing files.
+Installing include/libcamera/ipa/core_ipa_interface.h to /usr/local/include/libcamera/libcamera/ipa
+Installing include/libcamera/ipa/raspberrypi_ipa_interface.h to /usr/local/include/libcamera/libcamera/ipa
+Installing include/libcamera/control_ids.h to /usr/local/include/libcamera/libcamera
+Installing include/libcamera/property_ids.h to /usr/local/include/libcamera/libcamera
+Installing include/libcamera/formats.h to /usr/local/include/libcamera/libcamera
+Installing include/libcamera/libcamera.h to /usr/local/include/libcamera/libcamera
+Installing src/libcamera/base/libcamera-base.so.0.7.1 to /usr/local/lib
+Installing subprojects/libpisp/src/libpisp.so.1.3.0 to /usr/local/lib
+Installing subprojects/yaml-0.2.5/libyaml-0.a to /usr/local/lib
+Installing src/libcamera/libcamera.so.0.7.1 to /usr/local/lib
+Installing src/libcamera/proxy/worker/raspberrypi_ipa_proxy to /usr/local/libexec/libcamera
+Installing src/ipa/rpi/vc4/ipa_rpi_vc4.so to /usr/local/lib/libcamera/ipa
+Installing src/ipa/rpi/pisp/ipa_rpi_pisp.so to /usr/local/lib/libcamera/ipa
+Installing src/gstreamer/libgstlibcamera.so to /usr/local/lib/gstreamer-1.0
+Installing src/py/libcamera/_libcamera.cpython-312-aarch64-linux-gnu.so to /usr/local/lib/python3/dist-packages/libcamera
+Installing src/v4l2/v4l2-compat.so to /usr/local/libexec/libcamera
+Installing /home/sona/libcamera/include/libcamera/base/bound_method.h to /usr/local/include/libcamera/libcamera/base
+Installing /home/sona/libcamera/include/libcamera/base/class.h to /usr/local/include/libcamera/libcamera/base
+Installing /home/sona/libcamera/include/libcamera/base/flags.h to /usr/local/include/libcamera/libcamera/base
+Installing /home/sona/libcamera/include/libcamera/base/object.h to /usr/local/include/libcamera/libcamera/base
+Installing /home/sona/libcamera/include/libcamera/base/shared_fd.h to /usr/local/include/libcamera/libcamera/base
+Installing /home/sona/libcamera/include/libcamera/base/signal.h to /usr/local/include/libcamera/libcamera/base
+Installing /home/sona/libcamera/include/libcamera/base/span.h to /usr/local/include/libcamera/libcamera/base
+Installing /home/sona/libcamera/include/libcamera/base/unique_fd.h to /usr/local/include/libcamera/libcamera/base
+Installing /home/sona/libcamera/include/libcamera/ipa/ipa_controls.h to /usr/local/include/libcamera/libcamera/ipa
+Installing /home/sona/libcamera/include/libcamera/ipa/ipa_interface.h to /usr/local/include/libcamera/libcamera/ipa
+Installing /home/sona/libcamera/include/libcamera/ipa/ipa_module_info.h to /usr/local/include/libcamera/libcamera/ipa
+Installing /home/sona/libcamera/include/libcamera/camera.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/camera_manager.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/color_space.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/controls.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/fence.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/framebuffer.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/framebuffer_allocator.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/geometry.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/logging.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/orientation.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/pixel_format.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/request.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/stream.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/include/libcamera/transform.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/common/pisp_common.h to /usr/local/include/libpisp/common
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/common/logging.hpp to /usr/local/include/libpisp/common
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/common/shm_mutex.hpp to /usr/local/include/libpisp/common
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/common/utils.hpp to /usr/local/include/libpisp/common
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/common/version.hpp to /usr/local/include/libpisp/common
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/variants/variant.hpp to /usr/local/include/libpisp/variants
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/frontend/frontend.hpp to /usr/local/include/libpisp/frontend
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/frontend/pisp_fe_config.h to /usr/local/include/libpisp/frontend
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/frontend/pisp_statistics.h to /usr/local/include/libpisp/frontend
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/backend/backend.hpp to /usr/local/include/libpisp/backend
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/backend/pisp_be_config.h to /usr/local/include/libpisp/backend
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/backend/tiling/pisp_tiling.hpp to /usr/local/include/libpisp/backend/tiling
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/backend/tiling/types.hpp to /usr/local/include/libpisp/backend/tiling
+Installing /home/sona/libcamera/subprojects/libpisp/src/helpers/backend_device.hpp to /usr/local/include/libpisp/helpers
+Installing /home/sona/libcamera/subprojects/libpisp/src/helpers/device_fd.hpp to /usr/local/include/libpisp/helpers
+Installing /home/sona/libcamera/subprojects/libpisp/src/helpers/media_device.hpp to /usr/local/include/libpisp/helpers
+Installing /home/sona/libcamera/subprojects/libpisp/src/helpers/v4l2_device.hpp to /usr/local/include/libpisp/helpers
+Installing /home/sona/libcamera/subprojects/yaml-0.2.5/include/yaml.h to /usr/local/include
+Installing /home/sona/libcamera/utils/libcamera-bug-report to /usr/local/bin
+Installing /home/sona/libcamera/build/include/libcamera/version.h to /usr/local/include/libcamera/libcamera
+Installing /home/sona/libcamera/build/meson-private/libcamera-base.pc to /usr/local/lib/pkgconfig
+Installing /home/sona/libcamera/src/libcamera/pipeline/rpi/vc4/data/example.yaml to /usr/local/share/libcamera/pipeline/rpi/vc4
+Installing /home/sona/libcamera/src/libcamera/pipeline/rpi/vc4/data/rpi_apps.yaml to /usr/local/share/libcamera/pipeline/rpi/vc4
+Installing /home/sona/libcamera/subprojects/libpisp/src/libpisp/backend/backend_default_config.json to /usr/local/share/libpisp
+Installing /home/sona/libcamera/build/meson-private/libpisp.pc to /usr/local/lib/pkgconfig
+Installing /home/sona/libcamera/src/libcamera/pipeline/rpi/pisp/data/example.yaml to /usr/local/share/libcamera/pipeline/rpi/pisp
+Installing /home/sona/libcamera/build/meson-private/yaml-0.1.pc to /usr/local/lib/pkgconfig
+Installing /home/sona/libcamera/build/meson-private/libcamera.pc to /usr/local/lib/pkgconfig
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx219.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx219_noir.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx283.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx290.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx296.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx296_mono.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx327.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx335.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx378.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx415.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx415_b0569.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx462.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx477.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx477_noir.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx477_scientific.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx500.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx519.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx708.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx708_noir.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx708_wide.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/imx708_wide_noir.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/ov5647.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/ov5647_noir.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/ov64a40.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/ov7251_mono.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/ov9281_mono.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/se327m12.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/uncalibrated.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/vd55g1.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/vd55g1_mono.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/vd56g3.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/vc4/data/vd56g3_mono.json to /usr/local/share/libcamera/ipa/rpi/vc4
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx219.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx219_noir.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx283.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx290.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx296.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx296_mono.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx335.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx378.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx415.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx415_b0569.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx462.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx477.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx477_noir.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx477_scientific.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx500.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx519.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx708.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx708_noir.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx708_wide.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/imx708_wide_noir.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/ov5647.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/ov5647_noir.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/ov64a40.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/ov9281_mono.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/se327m12.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/uncalibrated.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/vd55g1.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/vd55g1_mono.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/vd56g3.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/ipa/rpi/pisp/data/vd56g3_mono.json to /usr/local/share/libcamera/ipa/rpi/pisp
+Installing /home/sona/libcamera/src/py/libcamera/__init__.py to /usr/local/lib/python3/dist-packages/libcamera
+Installing /home/sona/libcamera/build/src/v4l2/libcamerify to /usr/local/bin
+Installing symlink pointing to libcamera-base.so.0.7.1 to /usr/local/lib/libcamera-base.so.0.7
+Installing symlink pointing to libcamera-base.so.0.7 to /usr/local/lib/libcamera-base.so
+Installing symlink pointing to libpisp.so.1.3.0 to /usr/local/lib/libpisp.so.1
+Installing symlink pointing to libpisp.so.1 to /usr/local/lib/libpisp.so
+Installing symlink pointing to libcamera.so.0.7.1 to /usr/local/lib/libcamera.so.0.7
+Installing symlink pointing to libcamera.so.0.7 to /usr/local/lib/libcamera.so
+Running custom install script '/home/sona/libcamera/src/ipa/ipa-sign-install.sh /home/sona/libcamera/build/src/ipa-priv-key.pem lib/libcamera/ipa/ipa_rpi_vc4.so lib/libcamera/ipa/ipa_rpi_pisp.so'
+Regenerating IPA modules signatures
+Running custom install script '/usr/bin/python3 /home/sona/libcamera/build/meson-private/pycompile.py python-3.12-installed.json 0'
+Compiling '/usr/local/lib/python3/dist-packages/libcamera/__init__.py'..
+```
+
+</details>
+
+```bash
+cd
+```
+
+
 # Clone C++ Raspicam Application
 
 ```bash
+cd 
 git clone https://github.com/raspberrypi/rpicam-apps.git
 cd rpicam-apps
 ```
@@ -1609,7 +2162,103 @@ cd rpicam-apps
 <summary>Log</summary>
 
 ```bash
-xxx
+sona@rpi4-orso-sdbh:~/HowTo-Ubuntu24S-Raspicam-Webserver-Streaming/rpicam-apps$ cd
+sona@rpi4-orso-sdbh:~$ git clone https://github.com/raspberrypi/rpicam-apps.git
+Cloning into 'rpicam-apps'...
+remote: Enumerating objects: 4704, done.
+remote: Counting objects: 100% (168/168), done.
+remote: Compressing objects: 100% (60/60), done.
+remote: Total 4704 (delta 118), reused 108 (delta 108), pack-reused 4536 (from 3)
+Receiving objects: 100% (4704/4704), 253.49 MiB | 10.31 MiB/s, done.
+Resolving deltas: 100% (3102/3102), done.
+sona@rpi4-orso-sdbh:~$ cd rpicam-apps
+```
+
+</details>
+
+# Configure Build
+
+```bash
+meson setup build \
+  -Denable_libav=disabled \
+  -Denable_drm=enabled \
+  -Denable_egl=disabled \
+  -Denable_qt=disabled \
+  -Denable_opencv=disabled \
+  -Denable_tflite=disabled \
+  -Denable_hailo=disabled
+```
+
+<details>
+<summary>Log</summary>
+
+```bash
+sona@rpi4-orso-sdbh:~/rpicam-apps$ meson setup build \
+  -Denable_libav=disabled \
+  -Denable_drm=enabled \
+  -Denable_egl=disabled \
+  -Denable_qt=disabled \
+  -Denable_opencv=disabled \
+  -Denable_tflite=disabled \
+  -Denable_hailo=disabled
+The Meson build system
+Version: 1.3.2
+Source dir: /home/sona/rpicam-apps
+Build dir: /home/sona/rpicam-apps/build
+Build type: native build
+Project name: rpicam-apps
+Project version: 1.12.0
+C compiler for the host machine: cc (gcc 13.3.0 "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+C linker for the host machine: cc ld.bfd 2.42
+C++ compiler for the host machine: c++ (gcc 13.3.0 "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0")
+C++ linker for the host machine: c++ ld.bfd 2.42
+Host machine cpu family: aarch64
+Host machine cpu: aarch64
+Run-time dependency dl found: YES
+Found pkg-config: YES (/usr/bin/pkg-config) 1.8.1
+Run-time dependency libcamera found: YES 0.7.1
+Run-time dependency Boost (found: program_options) found: YES 1.83.0 (/usr)
+Run-time dependency threads found: YES
+Dependency libavcodec skipped: feature enable_libav disabled
+Run-time dependency libexif found: YES 0.6.24
+Run-time dependency libjpeg found: YES 2.1.5
+Run-time dependency libtiff-4 found: YES 4.5.1
+Run-time dependency libpng found: YES 1.6.43
+Dependency opencv4 skipped: feature enable_opencv disabled
+Dependency HailoRT (modules: HailoRT::libhailort) skipped: feature enable_hailo disabled
+Dependency hailo-tappas-core skipped: feature enable_hailo disabled
+Run-time dependency libdrm found: YES 2.4.125
+Dependency x11 skipped: feature enable_egl disabled
+Dependency epoxy skipped: feature enable_egl disabled
+Configuring config.h using configuration
+Build targets in project: 9
+
+rpicam-apps 1.12.0
+
+  libcamera
+    location             : /usr/local/lib
+    version              : 0.7.1
+
+  Build configuration
+    libav encoder        : NO
+    drm preview          : YES
+    egl preview          : NO
+    qt preview           : NO
+    OpenCV postprocessing: NO
+    TFLite postprocessing: NO
+    Hailo postprocessing : NO
+    IMX500 postprocessing: NO
+
+  User defined options
+    enable_drm           : enabled
+    enable_egl           : disabled
+    enable_hailo         : disabled
+    enable_libav         : disabled
+    enable_opencv        : disabled
+    enable_qt            : disabled
+    enable_tflite        : disabled
+
+Found ninja-1.11.1 at /usr/bin/ninja
 ```
 
 </details>
@@ -1618,19 +2267,187 @@ xxx
 
 
 
-
 ```bash
-
+meson compile -C build
 ```
 
+<details>
+<summary>Log</summary>
+
+```bash
+sona@rpi4-orso-sdbh:~/rpicam-apps$ meson compile -C build
+INFO: autodetecting backend as ninja
+INFO: calculating backend command to run: /usr/bin/ninja -C /home/sona/rpicam-apps/build
+ninja: Entering directory `/home/sona/rpicam-apps/build'
+[45/45] Linking target apps/rpicam-raw
+```
+
+</details>
 
 
+```bash
+sudo meson install -C build
+```
+
+<details>
+<summary>Log</summary>
+
+```bash
+sona@rpi4-orso-sdbh:~/rpicam-apps$ sudo meson install -C build
+Dropping privileges to 'sona' before running ninja...
+ninja: Entering directory `/home/sona/rpicam-apps/build'
+[4/9] Generating symbol file l...ibrpicam_app.so.1.12.0.symbols
+Installing post_processing_stages/core-postproc.so to /usr/local/lib/rpicam-apps-postproc
+Installing preview/drm-preview.so to /usr/local/lib/rpicam-apps-preview
+Installing librpicam_app.so.1.12.0 to /usr/local/lib
+Installing apps/rpicam-still to /usr/local/bin
+Installing apps/rpicam-vid to /usr/local/bin
+Installing apps/rpicam-hello to /usr/local/bin
+Installing apps/rpicam-raw to /usr/local/bin
+Installing apps/rpicam-jpeg to /usr/local/bin
+Installing /home/sona/rpicam-apps/core/buffer_sync.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/completed_request.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/dl_lib.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/dma_heaps.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/frame_info.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/rpicam_app.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/rpicam_encoder.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/logging.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/metadata.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/options.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/post_processor.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/still_options.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/stream_info.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/version.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/core/video_options.hpp to /usr/local/include/rpicam-apps/core
+Installing /home/sona/rpicam-apps/encoder/encoder.hpp to /usr/local/include/rpicam-apps/encoder
+Installing /home/sona/rpicam-apps/encoder/h264_encoder.hpp to /usr/local/include/rpicam-apps/encoder
+Installing /home/sona/rpicam-apps/encoder/mjpeg_encoder.hpp to /usr/local/include/rpicam-apps/encoder
+Installing /home/sona/rpicam-apps/encoder/null_encoder.hpp to /usr/local/include/rpicam-apps/encoder
+Installing /home/sona/rpicam-apps/image/image.hpp to /usr/local/include/rpicam-apps/image
+Installing /home/sona/rpicam-apps/output/circular_output.hpp to /usr/local/include/rpicam-apps/output
+Installing /home/sona/rpicam-apps/output/file_output.hpp to /usr/local/include/rpicam-apps/output
+Installing /home/sona/rpicam-apps/output/net_output.hpp to /usr/local/include/rpicam-apps/output
+Installing /home/sona/rpicam-apps/output/output.hpp to /usr/local/include/rpicam-apps/output
+Installing /home/sona/rpicam-apps/post_processing_stages/histogram.hpp to /usr/local/include/rpicam-apps/post_processing_stages
+Installing /home/sona/rpicam-apps/post_processing_stages/object_detect.hpp to /usr/local/include/rpicam-apps/post_processing_stages
+Installing /home/sona/rpicam-apps/post_processing_stages/post_processing_stage.hpp to /usr/local/include/rpicam-apps/post_processing_stages
+Installing /home/sona/rpicam-apps/post_processing_stages/pwl.hpp to /usr/local/include/rpicam-apps/post_processing_stages
+Installing /home/sona/rpicam-apps/post_processing_stages/segmentation.hpp to /usr/local/include/rpicam-apps/post_processing_stages
+Installing /home/sona/rpicam-apps/post_processing_stages/tf_stage.hpp to /usr/local/include/rpicam-apps/post_processing_stages
+Installing /home/sona/rpicam-apps/preview/preview.hpp to /usr/local/include/rpicam-apps/preview
+Installing /home/sona/rpicam-apps/assets/hdr.json to /usr/local/share/rpi-camera-assets
+Installing /home/sona/rpicam-apps/assets/motion_detect.json to /usr/local/share/rpi-camera-assets
+Installing /home/sona/rpicam-apps/assets/negate.json to /usr/local/share/rpi-camera-assets
+Installing /home/sona/rpicam-apps/assets/acoustic_focus.json to /usr/local/share/rpi-camera-assets
+Installing /home/sona/rpicam-apps/utils/camera-bug-report to /usr/local/bin
+Installing /home/sona/rpicam-apps/build/meson-private/rpicam_app.pc to /usr/local/lib/pkgconfig
+Installing symlink pointing to librpicam_app.so.1.12.0 to /usr/local/lib/librpicam_app.so.1
+Installing symlink pointing to librpicam_app.so.1 to /usr/local/lib/librpicam_app.so
+```
+
+</details>
+
+# Camera CSI Config File
+
+```bash
+cat /boot/firmware/config.txt
+```
+
+```bash
+sona@rpi4-orso-sdbh:~$ cat /boot/firmware/config.txt
+[all]
+arm_64bit=1
+kernel=vmlinuz
+cmdline=cmdline.txt
+initramfs initrd.img followkernel
+
+# Enable the audio output, I2C and SPI interfaces on the GPIO header. As these
+# parameters related to the base device-tree they must appear *before* any
+# other dtoverlay= specification
+dtparam=audio=on
+dtparam=i2c_arm=on
+dtparam=spi=on
+
+# Comment out the following line if the edges of the desktop appear outside
+# the edges of your display
+disable_overscan=1
+
+# If you have issues with audio, you may try uncommenting the following line
+# which forces the HDMI output into HDMI mode instead of DVI (which doesn't
+# support audio output)
+#hdmi_drive=2
+
+# Enable the KMS ("full" KMS) graphics overlay, leaving GPU memory as the
+# default (the kernel is in control of graphics memory with full KMS)
+dtoverlay=vc4-kms-v3d
+disable_fw_kms_setup=1
+
+# Enable the serial pins
+enable_uart=1
+
+# Autoload overlays for any recognized cameras or displays that are attached
+# to the CSI/DSI ports. Please note this is for libcamera support, *not* for
+# the legacy camera stack
+camera_auto_detect=1
+display_auto_detect=1
+
+# Config settings specific to arm64
+dtoverlay=dwc2
+
+[pi4]
+max_framebuffers=2
+arm_boost=1
+
+[pi3+]
+# Use a smaller contiguous memory area, specifically on the 3A+ to avoid an
+# OOM oops on boot. The 3B+ is also affected by this section, but it shouldn't
+# cause any issues on that board
+dtoverlay=vc4-kms-v3d,cma-128
+
+[pi02]
+# The Zero 2W is another 512MB board which is occasionally affected by the same
+# OOM oops on boot.
+dtoverlay=vc4-kms-v3d,cma-128
+
+[cm4]
+# Enable the USB2 outputs on the IO board (assuming your CM4 is plugged into
+# such a board)
+dtoverlay=dwc2,dr_mode=host
+
+[all]
+```
+
+### overlay
+
+Not sure what this does
+
+```bash
+# For Camera Module 3
+dtoverlay=imx708
+
+# For other cameras, use:
+# dtoverlay=imx477  # HQ Camera
+# dtoverlay=imx296  # GS Camera
+# dtoverlay=imx519  # 16MP Camera
+```
+
+# Reboot
 
 
+```bash
+sudo ldconfig
+sudo reboot
+```
 
-# Clone the C++ Application
+# Test rpicam application
 
-
+```bash
+sona@rpi4-orso-sdbh:~$ rpicam-hello --version
+rpicam-apps build: v1.12.0 9d41d4b7a83d 30-05-2026 (09:12:53)
+rpicam-apps capabilites: egl:0 qt:0 drm:1 libav:0
+libcamera build: v0.7.1+rpt20260429
+```
 
 # EOL
 

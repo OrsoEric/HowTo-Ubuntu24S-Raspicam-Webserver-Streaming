@@ -315,10 +315,233 @@ Aborted (core dumped)
 
 </details>
 
+# Try MJPG
+
+<details>
+<summary>Log</summary>
+
+```bash
+(.venv) sona@rpi4-orso-sdbh:~/HowTo-Ubuntu24S-Raspicam-Webserver-Streaming$ python demo-libcamera-webserver-mjpg.py
+[2:51:07.147229867] [13482]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260429
+[2:51:07.147958466] [13486]  INFO IPAManager ipa_manager.cpp:148 libcamera is not installed. Adding '/home/sona/libcamera/build/src/ipa' to the IPA search path
+[2:51:07.211821676] [13486]  INFO IPAProxy ipa_proxy.cpp:73 libcamera is not installed. Loading IPA configuration from '/home/sona/libcamera/src/ipa/rpi/vc4/data'
+[2:51:07.211918952] [13486]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /home/sona/libcamera/src/ipa/rpi/vc4/data/imx219.json
+[2:51:07.219852636] [13486]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx219@10' for pipeline handler rpi/vc4
+[2:51:07.219930468] [13486]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx219@10 to Unicam device /dev/media2 and ISP device /dev/media1
+[2:51:07.220709863] [13482]  INFO Camera camera.cpp:1216 configuring streams: (0) 640x480-RGB888/sRGB
+[2:51:07.221328223] [13486]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx219@10 - Selected sensor format: 640x480-SBGGR10_1X10/RAW - Selected unicam format: 640x480-pBAA/RAW
+ * Serving Flask app 'demo-libcamera-webserver-mjpg'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.1.227:8000
+Press CTRL+C to quit
+127.0.0.1 - - [31/May/2026 10:48:38] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [31/May/2026 10:48:39] "GET /stream HTTP/1.1" 500 -
+Error on request:
+Traceback (most recent call last):
+  File "/home/sona/HowTo-Ubuntu24S-Raspicam-Webserver-Streaming/.venv/lib/python3.12/site-packages/werkzeug/serving.py", line 371, in run_wsgi
+    execute(self.server.app)
+  File "/home/sona/HowTo-Ubuntu24S-Raspicam-Webserver-Streaming/.venv/lib/python3.12/site-packages/werkzeug/serving.py", line 334, in execute
+    for data in application_iter:
+  File "/home/sona/HowTo-Ubuntu24S-Raspicam-Webserver-Streaming/.venv/lib/python3.12/site-packages/werkzeug/wsgi.py", line 270, in __next__
+    return self._next()
+           ^^^^^^^^^^^^
+  File "/home/sona/HowTo-Ubuntu24S-Raspicam-Webserver-Streaming/.venv/lib/python3.12/site-packages/werkzeug/wrappers/response.py", line 32, in _iter_encoded
+    for item in iterable:
+  File "/home/sona/HowTo-Ubuntu24S-Raspicam-Webserver-Streaming/demo-libcamera-webserver-mjpg.py", line 84, in mjpeg_generator
+    frame = capture_frame()
+            ^^^^^^^^^^^^^^^
+  File "/home/sona/HowTo-Ubuntu24S-Raspicam-Webserver-Streaming/demo-libcamera-webserver-mjpg.py", line 51, in capture_frame
+    req.add_buffer(stream, buffers[0])
+TypeError: add_buffer(): incompatible function arguments. The following argument types are supported:
+    1. (self: libcamera._libcamera.Request, arg0: libcamera._libcamera.Stream, arg1: libcamera._libcamera.FrameBuffer) -> None
+
+Invoked with: <libcamera._libcamera.Request object at 0xffff88f69cb0>, <function stream at 0xffff88f55440>, <libcamera._libcamera.FrameBuffer object at 0xffff88f46bf0>
+127.0.0.1 - - [31/May/2026 10:48:39] "GET /favicon.ico HTTP/1.1" 404 -
+^C[2:51:16.867529085] [13486] ERROR V4L2 v4l2_videodevice.cpp:1322 /dev/video16[14:cap]: Unable to request 0 buffers: Device or resource busy
+[2:51:16.870035192] [13486] ERROR V4L2 v4l2_videodevice.cpp:1322 /dev/video15[13:cap]: Unable to request 0 buffers: Device or resource busy
+[2:51:16.872393042] [13486] ERROR V4L2 v4l2_videodevice.cpp:1322 /dev/video14[12:cap]: Unable to request 0 buffers: Device or resource busy
+[2:51:16.881748537] [13486] ERROR V4L2 v4l2_videodevice.cpp:1322 /dev/video13[11:out]: Unable to request 0 buffers: Device or resource busy
+[2:51:16.886720566] [13486] ERROR V4L2 v4l2_videodevice.cpp:1322 /dev/video0[10:cap]: Unable to request 0 buffers: Device or resource busy
+[2:51:16.891472618] [13486] FATAL default object.cpp:100 assertion "Thread::current() == thread_ || !thread_->isRunning()" failed in ~Object()
+Backtrace:
+libcamera::Object::~Object()+0x2c0 (/home/sona/libcamera/build/src/libcamera/base/libcamera-base.so.0.7.1 [0x0000ffff96cdf720])
+libcamera::ipa::RPi::IPAProxyRPiThreaded::~IPAProxyRPiThreaded()+0x5c (/home/sona/libcamera/build/src/libcamera/libcamera.so.0.7.1 [0x0000ffff96daefec])
+libcamera::ipa::RPi::IPAProxyRPiThreaded::~IPAProxyRPiThreaded()+0x14 (/home/sona/libcamera/build/src/libcamera/libcamera.so.0.7.1 [0x0000ffff96daf048])
+libcamera::Vc4CameraData::~Vc4CameraData()+0x984 (/home/sona/libcamera/build/src/libcamera/libcamera.so.0.7.1 [0x0000ffff96e72954])
+libcamera::Camera::~Camera()+0x188 (/home/sona/libcamera/build/src/libcamera/libcamera.so.0.7.1 [0x0000ffff96db62cc])
+libcamera::Camera::~Camera()+0x14 (/home/sona/libcamera/build/src/libcamera/libcamera.so.0.7.1 [0x0000ffff96db63c4])
+std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release_last_use_cold()+0x1c (/home/sona/libcamera/build/src/libcamera/libcamera.so.0.7.1 [0x0000ffff96db0a8c])
+libcamera::CameraManager::Private::cleanup()+0x110 (/home/sona/libcamera/build/src/libcamera/libcamera.so.0.7.1 [0x0000ffff96dbf4d0])
+??? [0x0000ffff96b11ae0] (/usr/lib/aarch64-linux-gnu/libstdc++.so.6.0.33 [0x0000ffff96b11ae0])
+??? [0x0000ffff96b11ae0] (/usr/lib/aarch64-linux-gnu/libstdc++.so.6.0.33 [0x0000ffff96b11ae0])
+Aborted (core dumped)
+```
+
+</details>
 
 
+# demo-libcamera-webserver-mjpg.py
 
+works! very good latency!
+htop shows 10% across cores
 
+## 640x480
+
+<details>
+<summary>Log</summary>
+
+```bash
+(.venv) sona@rpi4-orso-sdbh:~/HowTo-Ubuntu24S-Raspicam-Webserver-Streaming$ python demo-libcamera-webserver-mjpg.py
+[2:52:55.936148134] [13614]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260429
+[2:52:55.936875622] [13618]  INFO IPAManager ipa_manager.cpp:148 libcamera is not installed. Adding '/home/sona/libcamera/build/src/ipa' to the IPA search path
+[2:52:55.998437564] [13618]  INFO IPAProxy ipa_proxy.cpp:73 libcamera is not installed. Loading IPA configuration from '/home/sona/libcamera/src/ipa/rpi/vc4/data'
+[2:52:55.998536710] [13618]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /home/sona/libcamera/src/ipa/rpi/vc4/data/imx219.json
+[2:52:56.006520636] [13618]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx219@10' for pipeline handler rpi/vc4
+[2:52:56.006603857] [13618]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx219@10 to Unicam device /dev/media2 and ISP device /dev/media1
+[2:52:56.007430399] [13614]  INFO Camera camera.cpp:1216 configuring streams: (0) 640x480-RGB888/sRGB
+[2:52:56.008053574] [13618]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx219@10 - Selected sensor format: 640x480-SBGGR10_1X10/RAW - Selected unicam format: 640x480-pBAA/RAW
+[warmup] frame 0 done
+[warmup] frame 1 done
+[warmup] frame 2 done
+[warmup] frame 3 done
+[warmup] frame 4 done
+[server] starting on port 8000
+ * Serving Flask app 'demo-libcamera-webserver-mjpg'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.1.227:8000
+Press CTRL+C to quit
+127.0.0.1 - - [31/May/2026 10:50:30] "GET / HTTP/1.1" 200 -
+[http] client connected to /mjpg
+[capture] min=0 max=255
+127.0.0.1 - - [31/May/2026 10:50:30] "GET /favicon.ico HTTP/1.1" 404 -
+[encode] JPEG size=31552 bytes
+127.0.0.1 - - [31/May/2026 10:50:31] "GET /mjpg HTTP/1.1" 200 -
+[capture] min=0 max=255
+[encode] JPEG size=34028 bytes
+[capture] min=0 max=255
+[encode] JPEG size=33997 bytes
+[capture] min=0 max=255
+[encode] JPEG size=34091 bytes
+[capture] min=0 max=255
+[encode] JPEG size=34201 bytes
+[capture] min=0 max=255
+[encode] JPEG size=34240 bytes
+[capture] min=0 max=255
+[encode] JPEG size=34169 bytes
+[capture] min=0 max=255
+[encode] JPEG size=34158 bytes
+[capture] min=0 max=255
+[encode] JPEG size=34153 bytes
+[capture] min=0 max=255
+[encode] JPEG size=34098 bytes
+[capture] min=0 max=255
+[encode] JPEG size=34169 bytes
+[capture] min=0 max=255
+[encode] JPEG size=34235 bytes
+```
+
+</details>
+
+## 1640 x 1232
+
+Much sharper, still fast, but latency, I would have to measure it
+
+htop lists 20 to 50% core usage, it's more taxing on CPU
+
+(.venv) sona@rpi4-orso-sdbh:~/HowTo-Ubuntu24S-Raspicam-Webserver-Streamingpython demo-libcamera-webserver-mjpg.py
+[3:03:16.860590780] [14360]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260429
+[3:03:16.861347508] [14364]  INFO IPAManager ipa_manager.cpp:148 libcamera is not installed. Adding '/home/sona/libcamera/build/src/ipa' to the IPA search path
+[3:03:16.924661615] [14364]  INFO IPAProxy ipa_proxy.cpp:73 libcamera is not installed. Loading IPA configuration from '/home/sona/libcamera/src/ipa/rpi/vc4/data'
+[3:03:16.924761243] [14364]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /home/sona/libcamera/src/ipa/rpi/vc4/data/imx219.json
+[3:03:16.932651248] [14364]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx219@10' for pipeline handler rpi/vc4
+[3:03:16.932727524] [14364]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx219@10 to Unicam device /dev/media2 and ISP device /dev/media1
+[3:03:16.933501642] [14360]  INFO Camera camera.cpp:1216 configuring streams: (0) 1640x1232-RGB888/sRGB
+[3:03:16.934119354] [14364]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx219@10 - Selected sensor format: 1640x1232-SBGGR10_1X10/RAW - Selected unicam format: 1640x1232-pBAA/RAW
+[warmup] frame 0 done
+[warmup] frame 1 done
+[warmup] frame 2 done
+[warmup] frame 3 done
+[warmup] frame 4 done
+[server] starting on port 8000
+ * Serving Flask app 'demo-libcamera-webserver-mjpg'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.1.227:8000
+Press CTRL+C to quit
+127.0.0.1 - - [31/May/2026 11:00:49] "GET / HTTP/1.1" 200 -
+[http] client connected to /mjpg
+[capture] min=0 max=255
+127.0.0.1 - - [31/May/2026 11:00:49] "GET /favicon.ico HTTP/1.1" 404 -
+[encode] JPEG size=215853 bytes
+127.0.0.1 - - [31/May/2026 11:00:49] "GET /mjpg HTTP/1.1" 200 -
+[capture] min=0 max=255
+[encode] JPEG size=214311 bytes
+[capture] min=0 max=254
+[encode] JPEG size=212125 bytes
+[capture] min=0 max=255
+[encode] JPEG size=231623 bytes
+[capture] min=0 max=255
+[encode] JPEG size=231412 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230854 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230099 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230514 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230423 bytes
+[capture] min=0 max=255
+[encode] JPEG size=229921 bytes
+[capture] min=0 max=255
+[encode] JPEG size=229875 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230494 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230149 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230217 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230362 bytes
+[capture] min=0 max=255
+[encode] JPEG size=229980 bytes
+[capture] min=0 max=255
+[encode] JPEG size=229413 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230064 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230193 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230270 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230428 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230343 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230114 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230490 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230199 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230171 bytes
+[capture] min=0 max=255
+[encode] JPEG size=230099 bytes
+
+## CLOSE OPEN ISSUE
+
+When closing the browser, streaming doesn't stop
+
+When opening the browser, it opens a new stream
+
+Killing FPS
 
 # EOL
 

@@ -1,8 +1,13 @@
+"""
+python demo-opencv-snap-still.py
+"""
+
 import subprocess
 import cv2
 import numpy as np
 
 DEVICE = "/dev/video0"
+#DEVICE = "/dev/media0"
 NUM_FRAMES = 10
 
 print(f"\n=== Inspecting {DEVICE} ===\n")
@@ -40,6 +45,15 @@ def test_capture(dev):
         print("ERROR: OpenCV cannot open device")
         return
 
+    # --- Show what OpenCV actually selected ---
+    w = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    h = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    fourcc = int(cap.get(cv2.CAP_PROP_FOURCC))
+    fmt = "".join([chr((fourcc >> 8*i) & 0xFF) for i in range(4)])
+
+    print(f"OpenCV selected resolution: {int(w)}x{int(h)}")
+    print(f"OpenCV selected pixel format: {fmt}")
+
     brightness_values = []
     last_frame = None
 
@@ -48,6 +62,10 @@ def test_capture(dev):
         if not ret:
             print(f"Frame {i}: FAILED")
             continue
+
+        print("Frame shape:", frame.shape, "dtype:", frame.dtype)
+        print("First 32 bytes:", frame.flatten()[:32])
+
 
         last_frame = frame
 
@@ -68,6 +86,7 @@ def test_capture(dev):
     if last_frame is not None:
         cv2.imwrite("test.jpg", last_frame)
         print("Saved test.jpg")
+
 
 # --- Run all diagnostics ----------------------------------------------------
 print_device_info(DEVICE)

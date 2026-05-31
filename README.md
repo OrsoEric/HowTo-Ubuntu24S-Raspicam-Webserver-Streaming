@@ -15,5 +15,5 @@
 
 # working
 
-- ```python demo-libcamera-webserver-mjpg.py```
-- ```python demo-libcamera-webserver-http-mjpg.py```
+- ```python test-libcamera.py``` verify operation of libcamera
+- ```python demo-libcamera-webserver-http-mjpg.py``` serves a video stream webserver using MJPG 

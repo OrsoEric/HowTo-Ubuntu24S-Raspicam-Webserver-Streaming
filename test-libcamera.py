@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+"""
+python test-libcamera.py
+"""
+
 import libcamera
 import numpy as np
 import cv2

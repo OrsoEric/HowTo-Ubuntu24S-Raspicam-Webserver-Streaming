@@ -1,0 +1,434 @@
+(.venv) sona@rpi4-orso-sdbh:~/HowTo-Ubuntu24S-Raspicam-Webserver-Streaming$ python demo-libcamera-webserver-http-mjpg.py
+[4:04:02.173594387] [17919]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260429
+[4:04:02.174381207] [17923]  INFO IPAManager ipa_manager.cpp:148 libcamera is not installed. Adding '/home/sona/libcamera/build/src/ipa' to the IPA search path
+[4:04:02.236499128] [17923]  INFO IPAProxy ipa_proxy.cpp:73 libcamera is not installed. Loading IPA configuration from '/home/sona/libcamera/src/ipa/rpi/vc4/data'
+[4:04:02.236596979] [17923]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /home/sona/libcamera/src/ipa/rpi/vc4/data/imx219.json
+[4:04:02.244435817] [17923]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx219@10' for pipeline handler rpi/vc4
+[4:04:02.244511149] [17923]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx219@10 to Unicam device /dev/media2 and ISP device /dev/media1
+[main] starting camera
+[4:04:02.245518041] [17919]  INFO Camera camera.cpp:1216 configuring streams: (0) 1640x1232-RGB888/sRGB
+[4:04:02.246117957] [17923]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx219@10 - Selected sensor format: 1640x1232-SBGGR10_1X10/RAW - Selected unicam format: 1640x1232-pBAA/RAW
+[warmup] frame 0 done
+[warmup] frame 1 done
+[warmup] frame 2 done
+[warmup] frame 3 done
+[warmup] frame 4 done
+[server] starting bare HTTP on port 8000
+[client 281473532101456] connected /mjpg
+[capture] frame #1
+[capture] frame #2
+[capture] frame #3
+[capture] frame #4
+[capture] frame #5
+[client 281473532101456] sent frame #1
+[capture] frame #6
+[capture] frame #7
+[client 281473532101456] sent frame #2
+[capture] frame #8
+[client 281473532101456] sent frame #3
+[capture] frame #9
+[capture] frame #10
+[client 281473532101456] sent frame #4
+[capture] frame #11
+[client 281473532101456] sent frame #5
+[capture] frame #12
+[client 281473532101456] sent frame #6
+[capture] frame #13
+[client 281473532101456] sent frame #7
+[capture] frame #14
+[client 281473532101456] sent frame #8
+[capture] frame #15
+[client 281473532101456] sent frame #9
+[capture] frame #16
+[client 281473532101456] sent frame #10
+[capture] frame #17
+[client 281473532101456] sent frame #11
+[capture] frame #18
+[client 281473532101456] sent frame #12
+[capture] frame #19
+[client 281473532101456] sent frame #13
+[capture] frame #20
+[client 281473532101456] sent frame #14
+[capture] frame #21
+[client 281473532101456] sent frame #15
+[capture] frame #22
+[client 281473532101456] sent frame #16
+[capture] frame #23
+[client 281473532101456] sent frame #17
+[capture] frame #24
+[client 281473532101456] sent frame #18
+[capture] frame #25
+[client 281473532101456] sent frame #19
+[capture] frame #26
+[client 281473532101456] sent frame #20
+[capture] frame #27
+[client 281473532101456] sent frame #21
+[capture] frame #28
+[client 281473532101456] sent frame #22
+[capture] frame #29
+[client 281473532101456] sent frame #23
+[capture] frame #30
+[client 281473532101456] sent frame #24
+[capture] frame #31
+[client 281473532101456] sent frame #25
+[capture] frame #32
+[client 281473532101456] sent frame #26
+[capture] frame #33
+[client 281473532101456] sent frame #27
+[capture] frame #34
+[client 281473532101456] sent frame #28
+[capture] frame #35
+[client 281473532101456] sent frame #29
+[capture] frame #36
+[client 281473532101456] sent frame #30
+[capture] frame #37
+[client 281473532101456] sent frame #31
+[capture] frame #38
+[client 281473532101456] sent frame #32
+[capture] frame #39
+[client 281473532101456] sent frame #33
+[capture] frame #40
+[client 281473532101456] sent frame #34
+[capture] frame #41
+[client 281473532101456] sent frame #35
+[capture] frame #42
+[client 281473532101456] sent frame #36
+[capture] frame #43
+[client 281473532101456] sent frame #37
+[capture] frame #44
+[client 281473532101456] sent frame #38
+[capture] frame #45
+[client 281473532101456] sent frame #39
+[capture] frame #46
+[client 281473532101456] sent frame #40
+[capture] frame #47
+[client 281473532101456] sent frame #41
+[capture] frame #48
+[client 281473532101456] sent frame #42
+[capture] frame #49
+[client 281473532101456] sent frame #43
+[capture] frame #50
+[client 281473532101456] sent frame #44
+[capture] frame #51
+[client 281473532101456] sent frame #45
+[capture] frame #52
+[client 281473532101456] sent frame #46
+[capture] frame #53
+[client 281473532101456] sent frame #47
+[capture] frame #54
+[client 281473532101456] sent frame #48
+[capture] frame #55
+[client 281473532101456] sent frame #49
+[capture] frame #56
+[client 281473532101456] sent frame #50
+[capture] frame #57
+[client 281473532101456] sent frame #51
+[capture] frame #58
+[client 281473532101456] sent frame #52
+[capture] frame #59
+[client 281473532101456] sent frame #53
+[capture] frame #60
+[client 281473532101456] sent frame #54
+[capture] frame #61
+[client 281473532101456] sent frame #55
+[capture] frame #62
+[client 281473532101456] sent frame #56
+[capture] frame #63
+[client 281473532101456] sent frame #57
+[capture] frame #64
+[client 281473532101456] sent frame #58
+[capture] frame #65
+[client 281473532101456] sent frame #59
+[capture] frame #66
+[client 281473532101456] sent frame #60
+[capture] frame #67
+[client 281473532101456] sent frame #61
+[capture] frame #68
+[client 281473532101456] sent frame #62
+[capture] frame #69
+[client 281473532101456] sent frame #63
+[capture] frame #70
+[client 281473532101456] sent frame #64
+[capture] frame #71
+[client 281473532101456] sent frame #65
+[capture] frame #72
+[client 281473532101456] sent frame #66
+[capture] frame #73
+[client 281473532101456] sent frame #67
+[capture] frame #74
+[client 281473532101456] sent frame #68
+[capture] frame #75
+[client 281473532101456] sent frame #69
+[capture] frame #76
+[client 281473532101456] sent frame #70
+[capture] frame #77
+[client 281473532101456] sent frame #71
+[capture] frame #78
+[client 281473532101456] disconnect: [Errno 32] Broken pipe
+[client 281473532101456] releasing active_client_lock
+[capture] frame #79
+[client 281473762201568] connected /mjpg
+[capture] frame #80
+[capture] frame #81
+[capture] frame #82
+[client 281473762201568] sent frame #1
+[capture] frame #83
+[capture] frame #84
+[client 281473762201568] sent frame #2
+[capture] frame #85
+[client 281473762201568] sent frame #3
+[capture] frame #86
+[client 281473762201568] sent frame #4
+[capture] frame #87
+[client 281473762201568] sent frame #5
+[capture] frame #88
+[client 281473762201568] sent frame #6
+[capture] frame #89
+[client 281473762201568] sent frame #7
+[capture] frame #90
+[client 281473762201568] sent frame #8
+[capture] frame #91
+[client 281473762201568] sent frame #9
+[capture] frame #92
+[client 281473762201568] sent frame #10
+[capture] frame #93
+[client 281473762201568] sent frame #11
+[capture] frame #94
+[client 281473762201568] sent frame #12
+[capture] frame #95
+[client 281473762201568] sent frame #13
+[capture] frame #96
+[client 281473762201568] sent frame #14
+[capture] frame #97
+[client 281473762201568] sent frame #15
+[capture] frame #98
+[client 281473762201568] sent frame #16
+[capture] frame #99
+[client 281473762201568] sent frame #17
+[capture] frame #100
+[client 281473762201568] sent frame #18
+[capture] frame #101
+[client 281473762201568] sent frame #19
+[capture] frame #102
+[client 281473762201568] sent frame #20
+[capture] frame #103
+[client 281473762201568] sent frame #21
+[capture] frame #104
+[client 281473762201568] sent frame #22
+[capture] frame #105
+[client 281473762201568] sent frame #23
+[capture] frame #106
+[client 281473762201568] sent frame #24
+[capture] frame #107
+[client 281473762201568] sent frame #25
+[capture] frame #108
+[client 281473762201568] sent frame #26
+[capture] frame #109
+[client 281473762201568] sent frame #27
+[capture] frame #110
+[client 281473762201568] sent frame #28
+[capture] frame #111
+[client 281473762201568] sent frame #29
+[capture] frame #112
+[client 281473762201568] sent frame #30
+[capture] frame #113
+[client 281473762201568] sent frame #31
+[capture] frame #114
+[client 281473762201568] sent frame #32
+[capture] frame #115
+[client 281473762201568] sent frame #33
+[capture] frame #116
+[client 281473762201568] sent frame #34
+[capture] frame #117
+[client 281473762201568] sent frame #35
+[capture] frame #118
+[client 281473762201568] sent frame #36
+[capture] frame #119
+[client 281473762201568] sent frame #37
+[capture] frame #120
+[client 281473762201568] sent frame #38
+[capture] frame #121
+[client 281473762201568] sent frame #39
+[capture] frame #122
+[client 281473762201568] sent frame #40
+[capture] frame #123
+[client 281473762201568] sent frame #41
+[capture] frame #124
+[client 281473762201568] sent frame #42
+[capture] frame #125
+[client 281473762201568] sent frame #43
+[capture] frame #126
+[client 281473762201568] sent frame #44
+[capture] frame #127
+[client 281473762201568] sent frame #45
+[capture] frame #128
+[client 281473762201568] sent frame #46
+[capture] frame #129
+[client 281473762201568] sent frame #47
+[capture] frame #130
+[client 281473762201568] sent frame #48
+[capture] frame #131
+[client 281473762201568] sent frame #49
+[capture] frame #132
+[client 281473762201568] sent frame #50
+[capture] frame #133
+[client 281473762201568] sent frame #51
+[capture] frame #134
+[client 281473762201568] sent frame #52
+[capture] frame #135
+[client 281473762201568] sent frame #53
+[capture] frame #136
+[client 281473762201568] sent frame #54
+[capture] frame #137
+[client 281473762201568] sent frame #55
+[capture] frame #138
+[client 281473762201568] sent frame #56
+[capture] frame #139
+[client 281473762201568] sent frame #57
+[capture] frame #140
+[client 281473762201568] sent frame #58
+[capture] frame #141
+[client 281473762201568] sent frame #59
+[capture] frame #142
+[client 281473762201568] sent frame #60
+[capture] frame #143
+[client 281473762201568] sent frame #61
+[capture] frame #144
+[client 281473762201568] sent frame #62
+[capture] frame #145
+[client 281473762201568] sent frame #63
+[capture] frame #146
+[client 281473762201568] sent frame #64
+[capture] frame #147
+[client 281473762201568] sent frame #65
+[capture] frame #148
+[client 281473762201568] sent frame #66
+[capture] frame #149
+[client 281473762201568] sent frame #67
+[capture] frame #150
+[client 281473762201568] sent frame #68
+[capture] frame #151
+[client 281473762201568] sent frame #69
+[capture] frame #152
+[client 281473762201568] sent frame #70
+[capture] frame #153
+[client 281473762201568] sent frame #71
+[capture] frame #154
+[client 281473762201568] sent frame #72
+[capture] frame #155
+[client 281473762201568] sent frame #73
+[capture] frame #156
+[client 281473762201568] sent frame #74
+[capture] frame #157
+[client 281473762201568] sent frame #75
+[capture] frame #158
+[client 281473762201568] sent frame #76
+[capture] frame #159
+[client 281473762201568] sent frame #77
+[capture] frame #160
+[client 281473762201568] sent frame #78
+[capture] frame #161
+[client 281473762201568] sent frame #79
+[capture] frame #162
+[client 281473762201568] sent frame #80
+[capture] frame #163
+[client 281473762201568] sent frame #81
+[capture] frame #164
+[client 281473762201568] sent frame #82
+[capture] frame #165
+[client 281473762201568] sent frame #83
+[capture] frame #166
+[client 281473762201568] sent frame #84
+[capture] frame #167
+[client 281473762201568] sent frame #85
+[capture] frame #168
+[client 281473762201568] sent frame #86
+[capture] frame #169
+[client 281473762201568] sent frame #87
+[capture] frame #170
+[client 281473762201568] sent frame #88
+[capture] frame #171
+[client 281473762201568] sent frame #89
+[capture] frame #172
+[client 281473762201568] sent frame #90
+[capture] frame #173
+[client 281473762201568] sent frame #91
+[capture] frame #174
+[client 281473762201568] sent frame #92
+[capture] frame #175
+[client 281473762201568] sent frame #93
+[capture] frame #176
+[client 281473762201568] sent frame #94
+[capture] frame #177
+[client 281473762201568] sent frame #95
+[capture] frame #178
+[capture] frame #179
+[client 281473762201568] sent frame #96
+[capture] frame #180
+[client 281473762201568] sent frame #97
+[capture] frame #181
+[client 281473762201568] sent frame #98
+[capture] frame #182
+[client 281473762201568] sent frame #99
+[capture] frame #183
+[client 281473762201568] sent frame #100
+[capture] frame #184
+[client 281473762201568] sent frame #101
+[capture] frame #185
+[client 281473762201568] sent frame #102
+[capture] frame #186
+[client 281473762201568] sent frame #103
+[capture] frame #187
+[client 281473762201568] sent frame #104
+[capture] frame #188
+[client 281473762201568] sent frame #105
+[capture] frame #189
+[client 281473762201568] sent frame #106
+[capture] frame #190
+[client 281473762201568] sent frame #107
+[capture] frame #191
+[client 281473762201568] sent frame #108
+[capture] frame #192
+[client 281473762201568] sent frame #109
+[capture] frame #193
+[client 281473762201568] sent frame #110
+[capture] frame #194
+[client 281473762201568] sent frame #111
+[capture] frame #195
+[client 281473762201568] sent frame #112
+[capture] frame #196
+[client 281473762201568] sent frame #113
+[capture] frame #197
+[client 281473762201568] sent frame #114
+[capture] frame #198
+[client 281473762201568] sent frame #115
+[capture] frame #199
+[client 281473762201568] sent frame #116
+[capture] frame #200
+[client 281473762201568] sent frame #117
+[capture] frame #201
+[client 281473762201568] sent frame #118
+[capture] frame #202
+[client 281473762201568] sent frame #119
+[capture] frame #203
+[client 281473762201568] sent frame #120
+[capture] frame #204
+[client 281473762201568] sent frame #121
+[capture] frame #205
+[client 281473762201568] sent frame #122
+[capture] frame #206
+[client 281473762201568] sent frame #123
+[capture] frame #207
+[client 281473762201568] sent frame #124
+[capture] frame #208
+[client 281473762201568] sent frame #125
+[capture] frame #209
+[client 281473762201568] sent frame #126
+[capture] frame #210
+[client 281473762201568] sent frame #127
+[capture] frame #211
+[client 281473762201568] disconnect: [Errno 32] Broken pipe
+[client 281473762201568] releasing active_client_lock
+[capture] frame #212
+^C
+[server] shutting down

@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-
-"""
-
-python demo-libcamera-webserver-http-mjpg.py
-
-"""
-
 import libcamera
 import numpy as np
 import mmap
@@ -19,103 +12,136 @@ SIZE_W = 1640
 SIZE_H = 1232
 WARMUP_FRAMES = 5
 
-latest_frame = None
-frame_counter = 0
-frame_lock = threading.Lock()
-frame_event = threading.Event()
-
+# -------------------------------------------------
+# Global client activity flags
+# -------------------------------------------------
 active_client_lock = threading.Lock()
-
-# -------------------------
-# 1. Initialize libcamera
-# -------------------------
-cm = libcamera.CameraManager.singleton()
-cam = cm.cameras[0]
-cam.acquire()
-
-config = cam.generate_configuration([libcamera.StreamRole.Viewfinder])
-stream_cfg = config.at(0)
-stream_cfg.pixel_format = libcamera.PixelFormat("RGB888")
-stream_cfg.size = libcamera.Size(SIZE_W, SIZE_H)
-
-cam.configure(config)
-lc_stream = stream_cfg.stream
-
-allocator = libcamera.FrameBufferAllocator(cam)
-allocator.allocate(lc_stream)
-buffers = allocator.buffers(lc_stream)
-
-cam.start()
-
-# Warm-up
-for i in range(WARMUP_FRAMES):
-    req = cam.create_request()
-    req.add_buffer(lc_stream, buffers[0])
-    cam.queue_request(req)
-    while not cm.get_ready_requests():
-        time.sleep(0.005)
-    cm.get_ready_requests()
-    print(f"[warmup] frame {i} done")
+client_active_lock = threading.Lock()
+client_active = False
 
 
-# -------------------------
-# 2. Capture frame
-# -------------------------
-def capture_frame():
-    req = cam.create_request()
-    req.add_buffer(lc_stream, buffers[0])
-    cam.queue_request(req)
+# -------------------------------------------------
+# LibCameraCapture class
+# -------------------------------------------------
+class LibCameraCapture:
+    def __init__(self, width=SIZE_W, height=SIZE_H):
+        self.width = width
+        self.height = height
 
-    ready = []
-    while not ready:
-        ready = cm.get_ready_requests()
-        if not ready:
-            time.sleep(0.002)
+        self.cm = libcamera.CameraManager.singleton()
+        self.cam = self.cm.cameras[0]
 
-    completed = ready[0]
-    fb = completed.buffers[lc_stream]
-    plane = fb.planes[0]
+        self.latest_frame = None
+        self.frame_counter = 0
+        self.frame_lock = threading.Lock()
+        self.frame_event = threading.Event()
 
-    with mmap.mmap(plane.fd, plane.length,
-                   mmap.MAP_SHARED, mmap.PROT_READ,
-                   offset=plane.offset) as mm:
-        data = mm.read(plane.length)
+        self.running = False
+        self.stream = None
+        self.stream_cfg = None
+        self.allocator = None
+        self.buffers = None
 
-    stride_bytes = stream_cfg.stride
-    stride_pixels = stride_bytes // 3
+    def start(self):
+        self.cam.acquire()
 
-    frame = np.frombuffer(data, dtype=np.uint8)
-    frame = frame[:stride_bytes * SIZE_H]
-    frame = frame.reshape(SIZE_H, stride_pixels, 3)
-    frame = frame[:, :SIZE_W, :]
+        config = self.cam.generate_configuration([libcamera.StreamRole.Viewfinder])
+        stream_cfg = config.at(0)
+        stream_cfg.pixel_format = libcamera.PixelFormat("RGB888")
+        stream_cfg.size = libcamera.Size(self.width, self.height)
 
-    return frame
+        self.cam.configure(config)
+        self.stream = stream_cfg.stream
+        self.stream_cfg = stream_cfg
+
+        self.allocator = libcamera.FrameBufferAllocator(self.cam)
+        self.allocator.allocate(self.stream)
+        self.buffers = self.allocator.buffers(self.stream)
+
+        self.cam.start()
+
+        # Warm-up frames
+        for i in range(WARMUP_FRAMES):
+            _ = self.grab()
+            print(f"[warmup] frame {i} done")
+
+        self.running = True
+        threading.Thread(target=self._capture_loop, daemon=True).start()
+
+    def stop(self):
+        self.running = False
+        try:
+            self.cam.stop()
+        finally:
+            self.cam.release()
+
+    def grab(self):
+        req = self.cam.create_request()
+        req.add_buffer(self.stream, self.buffers[0])
+        self.cam.queue_request(req)
+
+        ready = []
+        while not ready:
+            ready = self.cm.get_ready_requests()
+            if not ready:
+                time.sleep(0.002)
+
+        completed = ready[0]
+        fb = completed.buffers[self.stream]
+        plane = fb.planes[0]
+
+        with mmap.mmap(
+            plane.fd,
+            plane.length,
+            mmap.MAP_SHARED,
+            mmap.PROT_READ,
+            offset=plane.offset,
+        ) as mm:
+            data = mm.read(plane.length)
+
+        stride_bytes = self.stream_cfg.stride
+        stride_pixels = stride_bytes // 3
+
+        frame = np.frombuffer(data, dtype=np.uint8)
+        frame = frame[:stride_bytes * self.height]
+        frame = frame.reshape(self.height, stride_pixels, 3)
+        frame = frame[:, :self.width, :]
+
+        return frame
+
+    def _capture_loop(self):
+        global client_active
+
+        while self.running:
+            with client_active_lock:
+                active = client_active
+
+            if not active:
+                time.sleep(0.1)
+                continue
+
+            frame = self.grab()
+
+            with self.frame_lock:
+                self.latest_frame = frame
+                self.frame_counter += 1
+                print(f"[capture] frame #{self.frame_counter}")
+
+            self.frame_event.set()
+            self.frame_event.clear()
 
 
-def capture_loop():
-    global latest_frame, frame_counter
-
-    while True:
-        frame = capture_frame()
-
-        with frame_lock:
-            latest_frame = frame
-            frame_counter += 1
-            print(f"[capture] frame #{frame_counter} "
-                  f"min={frame.min()} max={frame.max()}")
-
-        frame_event.set()
-        frame_event.clear()
+# -------------------------------------------------
+# HTTP MJPEG handler
+# -------------------------------------------------
+camera = LibCameraCapture()
 
 
-# -------------------------
-# 3. HTTP handler
-# -------------------------
 class MJPEGHandler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
     def log_message(self, fmt, *args):
-        # Silence default logging; we print our own
+        # Silence default logging
         return
 
     def do_GET(self):
@@ -140,8 +166,10 @@ class MJPEGHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
-        
+
     def _serve_mjpg(self):
+        global client_active
+
         if not active_client_lock.acquire(blocking=False):
             msg = b"Camera busy\n"
             self.send_response(503)
@@ -152,12 +180,16 @@ class MJPEGHandler(BaseHTTPRequestHandler):
             print("[http] rejected /mjpg: another client is active")
             return
 
+        with client_active_lock:
+            client_active = True
+
         client_id = id(self)
         print(f"[client {client_id}] connected /mjpg")
 
         self.send_response(200)
-        self.send_header("Content-Type",
-                        "multipart/x-mixed-replace; boundary=frame")
+        self.send_header(
+            "Content-Type", "multipart/x-mixed-replace; boundary=frame"
+        )
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
         self.send_header("Pragma", "no-cache")
         self.send_header("Expires", "0")
@@ -166,17 +198,16 @@ class MJPEGHandler(BaseHTTPRequestHandler):
         sent = 0
         try:
             while True:
-                # If socket is closed, stop immediately
                 if self.connection.fileno() == -1:
                     print(f"[client {client_id}] socket closed")
                     break
 
-                frame_event.wait()
+                camera.frame_event.wait()
 
-                with frame_lock:
-                    if latest_frame is None:
+                with camera.frame_lock:
+                    if camera.latest_frame is None:
                         continue
-                    frame = latest_frame.copy()
+                    frame = camera.latest_frame.copy()
 
                 img = Image.fromarray(frame, "RGB")
                 buf = io.BytesIO()
@@ -197,23 +228,26 @@ class MJPEGHandler(BaseHTTPRequestHandler):
                 print(f"[client {client_id}] sent frame #{sent}")
 
         finally:
+            with client_active_lock:
+                client_active = False
             print(f"[client {client_id}] releasing active_client_lock")
             active_client_lock.release()
 
 
-# -------------------------
-# 4. Run server
-# -------------------------
+# -------------------------------------------------
+# Main entry point
+# -------------------------------------------------
 if __name__ == "__main__":
-    print("Start frame grabber")
-    threading.Thread(target=capture_loop, daemon=True).start()
+    print("[main] starting camera")
+    camera.start()
 
     server = HTTPServer(("0.0.0.0", 8000), MJPEGHandler)
     print("[server] starting bare HTTP on port 8000")
+
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         print("\n[server] shutting down")
+    finally:
         server.server_close()
-        cam.stop()
-        cam.release()
+        camera.stop()

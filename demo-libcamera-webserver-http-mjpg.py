@@ -140,9 +140,8 @@ class MJPEGHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
-
+        
     def _serve_mjpg(self):
-        # single-client guard
         if not active_client_lock.acquire(blocking=False):
             msg = b"Camera busy\n"
             self.send_response(503)
@@ -158,7 +157,7 @@ class MJPEGHandler(BaseHTTPRequestHandler):
 
         self.send_response(200)
         self.send_header("Content-Type",
-                         "multipart/x-mixed-replace; boundary=frame")
+                        "multipart/x-mixed-replace; boundary=frame")
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
         self.send_header("Pragma", "no-cache")
         self.send_header("Expires", "0")
@@ -167,6 +166,11 @@ class MJPEGHandler(BaseHTTPRequestHandler):
         sent = 0
         try:
             while True:
+                # If socket is closed, stop immediately
+                if self.connection.fileno() == -1:
+                    print(f"[client {client_id}] socket closed")
+                    break
+
                 frame_event.wait()
 
                 with frame_lock:

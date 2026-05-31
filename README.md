@@ -13,3 +13,7 @@
     - TODO: check UDP
     - TODO: add QoS latency check
 
+# working
+
+- ```python demo-libcamera-webserver-mjpg.py```
+- ```python demo-libcamera-webserver-http-mjpg.py```

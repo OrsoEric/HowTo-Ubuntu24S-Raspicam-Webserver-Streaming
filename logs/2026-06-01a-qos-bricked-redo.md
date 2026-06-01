@@ -1273,6 +1273,136 @@ app debug now shows the three timestamp, and twhen a frame index receive is gott
 </details>
 
 
+# Test endurance 42000 frames
+
+<details>
+<summary>Log</summary>
+
+```bash
+ecv: 8047.7586 | Total Latency (Capture->Render): 131.82ms | Network Latency (Send->Render): 88.02ms
+[capture] frame #42518
+[client 281473522242512] sent frame #46 (Rolling Index: 18)
+[capture] frame #42519
+[Telemetry][Frame #17] Timestamps -> Cap: 8047.6868, Snd: 8047.7323, Recv: 8047.8432 | Total Latency (Capture->Render): 156.38ms | Network Latency (Send->Render): 110.88ms
+[client 281473522242512] sent frame #47 (Rolling Index: 19)
+[capture] frame #42520
+[Telemetry][Frame #18] Timestamps -> Cap: 8047.7591, Snd: 8047.8029, Recv: 8047.8937 | Total Latency (Capture->Render): 134.60ms | Network Latency (Send->Render): 90.79ms
+[client 281473522242512] sent frame #48 (Rolling Index: 20)
+[capture] frame #42521
+[Telemetry][Frame #19] Timestamps -> Cap: 8047.8150, Snd: 8047.8627, Recv: 8047.9598 | Total Latency (Capture->Render): 144.77ms | Network Latency (Send->Render): 97.11ms
+[client 281473522242512] sent frame #49 (Rolling Index: 21)
+[capture] frame #42522
+[Telemetry][Frame #20] Timestamps -> Cap: 8047.8844, Snd: 8047.9285, Recv: 8048.0189 | Total Latency (Capture->Render): 134.57ms | Network Latency (Send->Render): 90.44ms
+[client 281473522242512] sent frame #50 (Rolling Index: 22)
+[capture] frame #42523
+[Telemetry][Frame #21] Timestamps -> Cap: 8047.9441, Snd: 8047.9901, Recv: 8048.0799 | Total Latency (Capture->Render): 135.72ms | Network Latency (Send->Render): 89.73ms
+[client 281473522242512] sent frame #51 (Rolling Index: 23)
+[capture] frame #42524
+[Telemetry][Frame #22] Timestamps -> Cap: 8048.0087, Snd: 8048.0528, Recv: 8048.1472 | Total Latency (Capture->Render): 138.48ms | Network Latency (Send->Render): 94.38ms
+[client 281473522242512] sent frame #52 (Rolling Index: 24)
+[capture] frame #42525
+[Telemetry][Frame #23] Timestamps -> Cap: 8048.0709, Snd: 8048.1148, Recv: 8048.2293 | Total Latency (Capture->Render): 158.33ms | Network Latency (Send->Render): 114.49ms
+[capture] frame #42526
+[client 281473522242512] sent frame #53 (Rolling Index: 25)
+[Telemetry][Frame #24] Timestamps -> Cap: 8048.1418, Snd: 8048.1853, Recv: 8048.2984 | Total Latency (Capture->Render): 156.65ms | Network Latency (Send->Render): 113.07ms
+[capture] frame #42527
+[client 281473522242512] sent frame #54 (Rolling Index: 27)
+[capture] frame #42528
+[Telemetry][Frame #25] Timestamps -> Cap: 8048.2145, Snd: 8048.2751, Recv: 8048.4071 | Total Latency (Capture->Render): 192.52ms | Network Latency (Send->Render): 132.01ms
+[client 281473522242512] sent frame #55 (Rolling Index: 28)
+[capture] frame #42529
+[Telemetry][Frame #27] Timestamps -> Cap: 8048.3359, Snd: 8048.3777, Recv: 8048.4652 | Total Latency (Capture->Render): 129.31ms | Network Latency (Send->Render): 87.57ms
+[client 281473522242512] sent frame #56 (Rolling Index: 29)
+[capture] frame #42530
+[Telemetry][Frame #28] Timestamps -> Cap: 8048.3929, Snd: 8048.4361, Recv: 8048.5289 | Total Latency (Capture->Render): 135.95ms | Network Latency (Send->Render): 92.71ms
+[client 281473522242512] sent frame #57 (Rolling Index: 30)
+[capture] frame #42531
+[Telemetry][Frame #29] Timestamps -> Cap: 8048.4570, Snd: 8048.4995, Recv: 8048.5910 | Total Latency (Capture->Render): 134.03ms | Network Latency (Send->Render): 91.53ms
+[client 281473522242512] sent frame #58 (Rolling Index: 31)
+[capture] frame #42532
+[Telemetry][Frame #30] Timestamps -> Cap: 8048.5212, Snd: 8048.5630, Recv: 8048.6552 | Total Latency (Capture->Render): 134.05ms | Network Latency (Send->Render): 92.28ms
+[client 281473522242512] sent frame #59 (Rolling Index: 32)
+[capture] frame #42533
+[Telemetry][Frame #31] Timestamps -> Cap: 8048.5839, Snd: 8048.6276, Recv: 8048.7222 | Total Latency (Capture->Render): 138.27ms | Network Latency (Send->Render): 94.62ms
+[client 281473522242512] sent frame #60 (Rolling Index: 33)
+[capture] frame #42534
+[Telemetry][Frame #32] Timestamps -> Cap: 8048.6491, Snd: 8048.6918, Recv: 8048.7887 | Total Latency (Capture->Render): 139.62ms | Network Latency (Send->Render): 96.87ms
+[client 281473522242512] sent frame #61 (Rolling Index: 34)
+[capture] frame #42535
+[Telemetry][Frame #33] Timestamps -> Cap: 8048.7144, Snd: 8048.7606, Recv: 8048.8472 | Total Latency (Capture->Render): 132.79ms | Network Latency (Send->Render): 86.64ms
+[client 281473522242512] sent frame #62 (Rolling Index: 35)
+[capture] frame #42536
+[Telemetry][Frame #34] Timestamps -> Cap: 8048.7769, Snd: 8048.8205, Recv: 8048.9114 | Total Latency (Capture->Render): 134.45ms | Network Latency (Send->Render): 90.84ms
+[client 281473522242512] sent frame #63 (Rolling Index: 36)
+[capture] frame #42537
+[Telemetry][Frame #35] Timestamps -> Cap: 8048.8400, Snd: 8048.8838, Recv: 8048.9734 | Total Latency (Capture->Render): 133.45ms | Network Latency (Send->Render): 89.61ms
+[client 281473522242512] sent frame #64 (Rolling Index: 37)
+[capture] frame #42538
+[Telemetry][Frame #36] Timestamps -> Cap: 8048.9048, Snd: 8048.9476, Recv: 8049.0425 | Total Latency (Capture->Render): 137.66ms | Network Latency (Send->Render): 94.83ms
+[client 281473522242512] sent frame #65 (Rolling Index: 38)
+[capture] frame #42539
+[Telemetry][Frame #37] Timestamps -> Cap: 8048.9699, Snd: 8049.0124, Recv: 8049.1057 | Total Latency (Capture->Render): 135.87ms | Network Latency (Send->Render): 93.35ms
+[client 281473522242512] sent frame #66 (Rolling Index: 39)
+[capture] frame #42540
+[Telemetry][Frame #38] Timestamps -> Cap: 8049.0343, Snd: 8049.0783, Recv: 8049.1702 | Total Latency (Capture->Render): 135.81ms | Network Latency (Send->Render): 91.84ms
+[client 281473522242512] sent frame #67 (Rolling Index: 40)
+[capture] frame #42541
+[Telemetry][Frame #39] Timestamps -> Cap: 8049.0969, Snd: 8049.1401, Recv: 8049.2327 | Total Latency (Capture->Render): 135.78ms | Network Latency (Send->Render): 92.60ms
+[client 281473522242512] sent frame #68 (Rolling Index: 41)
+[capture] frame #42542
+[Telemetry][Frame #40] Timestamps -> Cap: 8049.1612, Snd: 8049.2039, Recv: 8049.2991 | Total Latency (Capture->Render): 137.94ms | Network Latency (Send->Render): 95.23ms
+[client 281473522242512] sent frame #69 (Rolling Index: 42)
+[capture] frame #42543
+[Telemetry][Frame #41] Timestamps -> Cap: 8049.2247, Snd: 8049.2699, Recv: 8049.3626 | Total Latency (Capture->Render): 137.89ms | Network Latency (Send->Render): 92.72ms
+[client 281473522242512] sent frame #70 (Rolling Index: 43)
+[capture] frame #42544
+[Telemetry][Frame #42] Timestamps -> Cap: 8049.2897, Snd: 8049.3338, Recv: 8049.4292 | Total Latency (Capture->Render): 139.52ms | Network Latency (Send->Render): 95.39ms
+[client 281473522242512] sent frame #71 (Rolling Index: 44)
+[capture] frame #42545
+[Telemetry][Frame #43] Timestamps -> Cap: 8049.3521, Snd: 8049.3986, Recv: 8049.5119 | Total Latency (Capture->Render): 159.73ms | Network Latency (Send->Render): 113.22ms
+[client 281473522242512] sent frame #72 (Rolling Index: 45)
+[capture] frame #42546
+[Telemetry][Frame #44] Timestamps -> Cap: 8049.4215, Snd: 8049.4683, Recv: 8049.5631 | Total Latency (Capture->Render): 141.67ms | Network Latency (Send->Render): 94.81ms
+[client 281473522242512] sent frame #73 (Rolling Index: 46)
+[capture] frame #42547
+[Telemetry][Frame #45] Timestamps -> Cap: 8049.4802, Snd: 8049.5309, Recv: 8049.6368 | Total Latency (Capture->Render): 156.64ms | Network Latency (Send->Render): 105.93ms
+[client 281473522242512] sent frame #74 (Rolling Index: 47)
+[capture] frame #42548
+[Telemetry][Frame #46] Timestamps -> Cap: 8049.5460, Snd: 8049.5933, Recv: 8049.6866 | Total Latency (Capture->Render): 140.60ms | Network Latency (Send->Render): 93.27ms
+[client 281473522242512] sent frame #75 (Rolling Index: 48)
+[capture] frame #42549
+[Telemetry][Frame #47] Timestamps -> Cap: 8049.6078, Snd: 8049.6549, Recv: 8049.7603 | Total Latency (Capture->Render): 152.51ms | Network Latency (Send->Render): 105.43ms
+[client 281473522242512] sent frame #76 (Rolling Index: 49)
+[capture] frame #42550
+[Telemetry][Frame #48] Timestamps -> Cap: 8049.6769, Snd: 8049.7233, Recv: 8049.8224 | Total Latency (Capture->Render): 145.51ms | Network Latency (Send->Render): 99.15ms
+[client 281473522242512] sent frame #77 (Rolling Index: 50)
+[capture] frame #42551
+[Telemetry][Frame #49] Timestamps -> Cap: 8049.7387, Snd: 8049.7840, Recv: 8049.8782 | Total Latency (Capture->Render): 139.56ms | Network Latency (Send->Render): 94.26ms
+[client 281473522242512] sent frame #78 (Rolling Index: 51)
+[capture] frame #42552
+[Telemetry][Frame #50] Timestamps -> Cap: 8049.8007, Snd: 8049.8457, Recv: 8049.9366 | Total Latency (Capture->Render): 135.83ms | Network Latency (Send->Render): 90.83ms
+[client 281473522242512] sent frame #79 (Rolling Index: 52)
+[capture] frame #42553
+[Telemetry][Frame #51] Timestamps -> Cap: 8049.8642, Snd: 8049.9084, Recv: 8050.0012 | Total Latency (Capture->Render): 137.00ms | Network Latency (Send->Render): 92.82ms
+[client 281473522242512] sent frame #80 (Rolling Index: 53)
+[Telemetry][Frame #52] Timestamps -> Cap: 8049.9278, Snd: 8049.9723, Recv: 8050.0609 | Total Latency (Capture->Render): 133.06ms | Network Latency (Send->Render): 88.60ms
+[capture] frame #42554
+[client 281473522242512] sent frame #81 (Rolling Index: 54)
+[capture] frame #42555
+[Telemetry][Frame #53] Timestamps -> Cap: 8049.9905, Snd: 8050.0355, Recv: 8050.1346 | Total Latency (Capture->Render): 144.07ms | Network Latency (Send->Render): 99.11ms
+[WebSocket Control] Active generation advanced to 4. Camera capture halted.
+[WebSocket] Channel teardown complete for client 281473503701872
+[client 281473522242512] sent frame #82 (Rolling Index: 55)
+[DEBUG][client 281473522242512] Loop stopped: Evicted/Disconnected by state change.
+[capture] frame #42556
+^C
+[server] shutting down
+```
+
+</details>
+
+
+
 # EOL
 
 

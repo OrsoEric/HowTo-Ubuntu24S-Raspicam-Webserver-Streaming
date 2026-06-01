@@ -1,29 +1,31 @@
 #!/usr/bin/env python3
+import io
+import mmap
+import socket
+import threading
+import time
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import libcamera
 import numpy as np
-import mmap
-import time
-import threading
-from http.server import HTTPServer, BaseHTTPRequestHandler
 from PIL import Image
-import io
 
 SIZE_W = 1640
 SIZE_H = 1232
 WARMUP_FRAMES = 5
 
 # -------------------------------------------------
-# Global client activity flags
+# Clean, Atomic State Controls
 # -------------------------------------------------
-active_client_lock = threading.Lock()
-client_active_lock = threading.Lock()
-client_active = False
+state_lock = threading.Lock()
+current_client_id = None  # Track exactly who owns the camera right now
+active_generation = 0    # Incremented every time a new client takes over
+
 
 # -------------------------------------------------
 # LibCameraCapture class
 # -------------------------------------------------
-
 class LibCameraCapture:
+
     def __init__(self, width=SIZE_W, height=SIZE_H):
         self.width = width
         self.height = height
@@ -45,7 +47,9 @@ class LibCameraCapture:
     def start(self):
         self.cam.acquire()
 
-        config = self.cam.generate_configuration([libcamera.StreamRole.Viewfinder])
+        config = self.cam.generate_configuration([
+            libcamera.StreamRole.Viewfinder
+        ])
         stream_cfg = config.at(0)
         stream_cfg.pixel_format = libcamera.PixelFormat("RGB888")
         stream_cfg.size = libcamera.Size(self.width, self.height)
@@ -103,20 +107,20 @@ class LibCameraCapture:
         stride_pixels = stride_bytes // 3
 
         frame = np.frombuffer(data, dtype=np.uint8)
-        frame = frame[:stride_bytes * self.height]
+        frame = frame[: stride_bytes * self.height]
         frame = frame.reshape(self.height, stride_pixels, 3)
-        frame = frame[:, :self.width, :]
+        frame = frame[:, : self.width, :]
 
         return frame
 
     def _capture_loop(self):
-        global client_active
+        global current_client_id
 
         while self.running:
-            with client_active_lock:
-                active = client_active
+            with state_lock:
+                has_active_client = current_client_id is not None
 
-            if not active:
+            if not has_active_client:
                 time.sleep(0.1)
                 continue
 
@@ -131,18 +135,17 @@ class LibCameraCapture:
             self.frame_event.clear()
 
 
-# -------------------------------------------------
-# HTTP MJPEG handler
-# -------------------------------------------------
 camera = LibCameraCapture()
 
 
+# -------------------------------------------------
+# HTTP MJPEG handler
+# -------------------------------------------------
 class MJPEGHandler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
     def log_message(self, fmt, *args):
-        # Silence default logging
-        return
+        return  # Suppress standard HTTP logs
 
     def do_GET(self):
         if self.path == "/":
@@ -168,70 +171,117 @@ class MJPEGHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def _serve_mjpg(self):
-        global client_active
-
-        if not active_client_lock.acquire(blocking=False):
-            msg = b"Camera busy\n"
-            self.send_response(503)
-            self.send_header("Content-Type", "text/plain; charset=utf-8")
-            self.send_header("Content-Length", str(len(msg)))
-            self.end_headers()
-            self.wfile.write(msg)
-            print("[http] rejected /mjpg: another client is active")
-            return
-
-        with client_active_lock:
-            client_active = True
-
+        global current_client_id, active_generation
         client_id = id(self)
-        print(f"[client {client_id}] connected /mjpg")
+        my_generation = 0
 
-        self.send_response(200)
-        self.send_header(
-            "Content-Type", "multipart/x-mixed-replace; boundary=frame"
-        )
-        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
-        self.send_header("Pragma", "no-cache")
-        self.send_header("Expires", "0")
-        self.end_headers()
+        # -------------------------------------------------
+        # Preemptive Takeover Guard
+        # -------------------------------------------------
+        with state_lock:
+            active_generation += 1
+            my_generation = active_generation
+            
+            if current_client_id is not None:
+                print(
+                    f"\n[DEBUG][http] NEW REQUEST from {client_id}. Evicting lingering client {current_client_id}..."
+                )
+            
+            # Unconditionally take ownership of the global lock
+            current_client_id = client_id
+            print(f"[DEBUG][client {client_id}] ===== Granted Camera Ownership (Gen {my_generation}) =====")
+
+        # Configure network behavior options
+        self.connection.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+
+        try:
+            self.send_response(200)
+            self.send_header(
+                "Content-Type", "multipart/x-mixed-replace; boundary=frame"
+            )
+            self.send_header(
+                "Cache-Control", "no-cache, no-store, must-revalidate"
+            )
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+            self.end_headers()
+        except Exception as e:
+            print(f"[DEBUG][client {client_id}] Failed during header negotiation: {e}")
+            self._cleanup_client(client_id, my_generation)
+            return
 
         sent = 0
         try:
             while True:
-                if self.connection.fileno() == -1:
-                    print(f"[client {client_id}] socket closed")
-                    break
+                # 1. Generation Check: Has a newer client booted us out?
+                with state_lock:
+                    if active_generation != my_generation:
+                        print(f"[DEBUG][client {client_id}] Loop stopped: Evicted by newer connection.")
+                        break
 
-                camera.frame_event.wait()
+                # 2. Fast Proactive Socket Check
+                self.connection.setblocking(False)
+                try:
+                    data = self.connection.recv(1, socket.MSG_PEEK)
+                    if data == b"":
+                        print(f"\n[DEBUG][client {client_id}] DISCONNECT DETECTED via empty read (EOF).")
+                        break
+                except BlockingIOError:
+                    pass
+                except (ConnectionResetError, BrokenPipeError, OSError) as e:
+                    print(f"\n[DEBUG][client {client_id}] DISCONNECT DETECTED via read exception: {e}")
+                    break
+                finally:
+                    self.connection.setblocking(True)
+
+                # 3. Bounded wait for frame production
+                flag_triggered = camera.frame_event.wait(timeout=0.2)
+                if not flag_triggered:
+                    continue
 
                 with camera.frame_lock:
                     if camera.latest_frame is None:
                         continue
                     frame = camera.latest_frame.copy()
 
+                # 4. Compress frame to JPEG
                 img = Image.fromarray(frame, "RGB")
                 buf = io.BytesIO()
                 img.save(buf, format="JPEG", quality=80)
                 jpg = buf.getvalue()
 
+                # 5. Formulate payload
+                payload = (
+                    b"--frame\r\n"
+                    b"Content-Type: image/jpeg\r\n"
+                    b"Content-Length: " + str(len(jpg)).encode() + b"\r\n\r\n"
+                    + jpg
+                    + b"\r\n"
+                )
+
+                # 6. Push data out to client
                 try:
-                    self.wfile.write(b"--frame\r\n")
-                    self.wfile.write(b"Content-Type: image/jpeg\r\n\r\n")
-                    self.wfile.write(jpg)
-                    self.wfile.write(b"\r\n")
-                    self.wfile.flush()
-                except (BrokenPipeError, ConnectionResetError, OSError) as e:
-                    print(f"[client {client_id}] disconnect: {e}")
+                    self.connection.sendall(payload)
+                except (BrokenPipeError, ConnectionResetError, OSError, TimeoutError) as e:
+                    print(f"\n[DEBUG][client {client_id}] DISCONNECT DETECTED via sendall failure: {e}")
                     break
 
                 sent += 1
                 print(f"[client {client_id}] sent frame #{sent}")
 
         finally:
-            with client_active_lock:
-                client_active = False
-            print(f"[client {client_id}] releasing active_client_lock")
-            active_client_lock.release()
+            self._cleanup_client(client_id, my_generation)
+
+    def _cleanup_client(self, client_id, my_generation):
+        global current_client_id
+        with state_lock:
+            # ONLY clear the global camera tracking lock if WE are still the current owner.
+            # If a newer client evicted us, leaving it alone lets them keep streaming.
+            if current_client_id == client_id and active_generation == my_generation:
+                current_client_id = None
+                print(f"[DEBUG][client {client_id}] ===== Camera cleanly released =====")
+            else:
+                print(f"[DEBUG][client {client_id}] Releasing thread (Overwritten by newer generation).")
 
 
 # -------------------------------------------------
@@ -241,8 +291,8 @@ if __name__ == "__main__":
     print("[main] starting camera")
     camera.start()
 
-    server = HTTPServer(("0.0.0.0", 8000), MJPEGHandler)
-    print("[server] starting bare HTTP on port 8000")
+    server = ThreadingHTTPServer(("0.0.0.0", 8000), MJPEGHandler)
+    print("[server] starting threaded HTTP on port 8000")
 
     try:
         server.serve_forever()

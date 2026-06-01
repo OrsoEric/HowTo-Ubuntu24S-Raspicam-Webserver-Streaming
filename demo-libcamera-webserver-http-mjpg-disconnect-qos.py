@@ -13,6 +13,7 @@ from PIL import Image
 import hashlib
 import base64
 import struct
+import json
 
 SIZE_W = 1640
 SIZE_H = 1232
@@ -21,6 +22,13 @@ WARMUP_FRAMES = 5
 state_lock = threading.Lock()
 current_client_id = None  
 active_generation = 0    
+
+# -------------------------------------------------
+# Global Latency Telemetry Matrix
+# -------------------------------------------------
+# Key: Frame Index (0-99 rolling) -> Value: [capture_ts, send_ts]
+telemetry_lock = threading.Lock()
+telemetry_registry = {}
 
 
 # -------------------------------------------------
@@ -37,6 +45,7 @@ class LibCameraCapture:
         self.frame_lock = threading.Lock()
         self.frame_event = threading.Event()
         self.running = False
+        self.latest_capture_ts = 0.0
 
     def start(self):
         self.cam.acquire()
@@ -103,9 +112,12 @@ class LibCameraCapture:
                 continue
 
             frame = self.grab()
+            ts = time.perf_counter()  # Record hardware capture completion profile
+
             with self.frame_lock:
                 self.latest_frame = frame
                 self.frame_counter += 1
+                self.latest_capture_ts = ts
                 print(f"[capture] frame #{self.frame_counter}")
             self.frame_event.set()
             self.frame_event.clear()
@@ -120,7 +132,7 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
     def log_message(self, fmt, *args):
-        return  # Silence asset log requests
+        return  
 
     def do_GET(self):
         if self.headers.get("Upgrade", "").lower() == "websocket":
@@ -137,7 +149,7 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
         <!DOCTYPE html>
         <html>
         <body style="background:#111; color:white; text-align:center; font-family:sans-serif;">
-            <h1>Raspberry Pi Synchronized Stream</h1>
+            <h1>Raspberry Pi Performance Stream</h1>
             <canvas id="videoCanvas" style="width:90%; border:2px solid #444; background:#000;"></canvas>
             <div id="status" style="margin-top:10px; color:#aaa;">Connecting telemetry...</div>
 
@@ -152,7 +164,7 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
                 const LENGTH_MARKER = new Uint8Array([67, 111, 110, 116, 101, 110, 116, 45, 76, 101, 110, 103, 116, 104, 58]); 
 
                 const ws = new WebSocket('ws://' + window.location.host + '/ws');
-                ws.onopen = () => { statusDiv.innerText = "Telemetry linked. Streaming video..."; };
+                ws.onopen = () => { statusDiv.innerText = "Telemetry linked. Performance engines live."; };
                 ws.onclose = () => { statusDiv.innerText = "Control channel disconnected."; };
 
                 async function startStream() {
@@ -278,17 +290,14 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
         sent = 0
         try:
             while True:
-                # Generation Check: Handles both tab switch evictions and WebSocket closes
                 with state_lock:
                     if active_generation != my_generation:
                         print(f"[DEBUG][client {client_id}] Loop stopped: Evicted/Disconnected by state change.")
                         break
 
-                # Non-blocking socket verification check
                 self.connection.setblocking(False)
                 try:
                     if self.connection.recv(1, socket.MSG_PEEK) == b"":
-                        print(f"[DEBUG][client {client_id}] HTTP Socket returned EOF.")
                         break
                 except BlockingIOError:
                     pass
@@ -305,7 +314,11 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
                     if camera.latest_frame is None:
                         continue
                     frame = camera.latest_frame.copy()
-                    current_idx = camera.frame_counter  
+                    raw_idx = camera.frame_counter  
+                    capture_ts = camera.latest_capture_ts
+
+                # Normalize index to a strict sliding window of 0 to 99
+                rolling_idx = raw_idx % 100
 
                 img = Image.fromarray(frame, "RGB")
                 buf = io.BytesIO()
@@ -315,7 +328,7 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
                 payload = (
                     b"--frame\r\n"
                     b"Content-Type: image/jpeg\r\n"
-                    b"X-Frame-Index: " + str(current_idx).encode() + b"\r\n"
+                    b"X-Frame-Index: " + str(rolling_idx).encode() + b"\r\n"
                     b"Content-Length: " + str(len(jpg)).encode() + b"\r\n\r\n"
                     + jpg
                     + b"\r\n"
@@ -323,12 +336,19 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
 
                 try:
                     self.connection.sendall(payload)
-                except Exception as e:
-                    print(f"[DEBUG][client {client_id}] Send failure: {e}")
+                    send_ts = time.perf_counter()  # Log time stamps right as kernel takes over
+                except Exception:
                     break
 
+                # Store timestamps before tracking receipt
+                with telemetry_lock:
+                    telemetry_registry[rolling_idx] = {
+                        "capture_ts": capture_ts,
+                        "send_ts": send_ts
+                    }
+
                 sent += 1
-                print(f"[client {client_id}] sent frame #{sent} (App Index: {current_idx})")
+                print(f"[client {client_id}] sent frame #{sent} (Rolling Index: {rolling_idx})")
 
         finally:
             self._cleanup_client(client_id, my_generation)
@@ -346,7 +366,6 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
     def _handle_websocket(self):
         global active_generation, current_client_id
         client_id = id(self)
-        print(f"[WebSocket] Incoming handshake negotiation request from client {client_id}")
         
         key = self.headers.get("Sec-WebSocket-Key")
         guid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
@@ -357,9 +376,7 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
         self.wfile.write(b"Connection: Upgrade\r\n")
         self.wfile.write(f"Sec-WebSocket-Accept: {accept_key}\r\n\r\n".encode())
         self.wfile.flush()
-        print(f"[WebSocket] Connection channel up and upgraded successfully for client {client_id}")
 
-        # Tie this WebSocket session to the *current* active camera generation
         with state_lock:
             my_ws_generation = active_generation
 
@@ -371,9 +388,7 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
                 
                 b1, b2 = header[0], header[1]
                 opcode = b1 & 0x0F
-                
                 if opcode == 0x8:
-                    print(f"[WebSocket] Client {client_id} sent graceful socket close frame.")
                     break
 
                 payload_len = b2 & 0x7F
@@ -390,23 +405,43 @@ class MultiProtocolHandler(BaseHTTPRequestHandler):
                     unmasked[i] = masked_data[i] ^ mask_key[i % 4]
 
                 message = unmasked.decode("utf-8", errors="ignore")
-                print(f"[WebSocket Feedback][client {client_id}] -> RECEIVED: {message}")
+                recv_ts = time.perf_counter()  # Snap frame rendering confirmation arrival timestamp
 
-            except Exception as e:
-                print(f"[WebSocket Exception] Channel terminated for client {client_id}: {e}")
+                # Process the message telemetry payload
+                try:
+                    data = json.loads(message)
+                    if data.get("event") == "rendered":
+                        target_idx = int(data.get("index"))
+                        
+                        # Match receipt against rolling table registry
+                        with telemetry_lock:
+                            record = telemetry_registry.get(target_idx)
+                        
+                        if record:
+                            cap_ts = record["capture_ts"]
+                            snd_ts = record["send_ts"]
+                            
+                            # Convert system perf markers to precise millisecond intervals
+                            latency_total = (recv_ts - cap_ts) * 1000.0
+                            latency_network = (recv_ts - snd_ts) * 1000.0
+                            
+                            print(
+                                f"[Telemetry][Frame #{target_idx}] "
+                                f"Timestamps -> Cap: {cap_ts:.4f}, Snd: {snd_ts:.4f}, Recv: {recv_ts:.4f} | "
+                                f"Total Latency (Capture->Render): {latency_total:.2f}ms | "
+                                f"Network Latency (Send->Render): {latency_network:.2f}ms"
+                            )
+                except Exception as e:
+                    print(f"[Telemetry Error] Parsing failure: {e}")
+
+            except Exception:
                 break
 
-        # -------------------------------------------------
-        # TRIGGER TEARDOWN ON DISCONNECT
-        # -------------------------------------------------
-        # If the closed WebSocket corresponds to the active session, kill the streaming loop
         with state_lock:
             if active_generation == my_ws_generation:
-                active_generation += 1  # Evicts the paired MJPEG thread loop immediately
-                current_client_id = None  # Signals the camera capture loop to halt
+                active_generation += 1  
+                current_client_id = None  
                 print(f"[WebSocket Control] Active generation advanced to {active_generation}. Camera capture halted.")
-            else:
-                print(f"[WebSocket Control] Stale channel disconnected for client {client_id}. No action needed.")
 
         print(f"[WebSocket] Channel teardown complete for client {client_id}")
 

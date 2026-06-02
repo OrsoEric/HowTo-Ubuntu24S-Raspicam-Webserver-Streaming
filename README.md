@@ -19,6 +19,13 @@
 - ```python demo-libcamera-webserver-http-mjpg.py``` serves a video stream webserver using MJPG 
 
 
+# Streaming with QoS latency detection
+
+```bash
+export PYTHONPATH=$HOME/libcamera/build/src/py:$PYTHONPATH
+source .venv/bin/activate
+python demo-libcamera-webserver-http-mjpg-disconnect-qos.py
+```
 
 
 # EOL

@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+
+"""
+export PYTHONPATH=$HOME/libcamera/build/src/py:$PYTHONPATH
+python demo-libcamera-webserver-http-mjpg-disconnect-qos.py
+"""
+
 import io
 import mmap
 import socket

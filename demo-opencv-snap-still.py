@@ -1,5 +1,11 @@
 """
+sudo apt install python3-opencvy
+source .venv/bin/activate
+uv pip install v4l2py
+uv pip install opencv-python-headless
 python demo-opencv-snap-still.py
+
+v4l2-ctl -d /dev/video0 --info
 """
 
 import subprocess
